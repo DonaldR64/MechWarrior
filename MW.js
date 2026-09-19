@@ -9,6 +9,20 @@ const Main = (() => {
     let MapInfo = {};
     let UnitArray = {};
 
+
+    let moveStatuses = {
+        "Not Activated": "transparent",
+        "Standstill": "#000000",
+        "Move": "#00ff00",
+        "Sprint": "#ffff00",
+        "Jump": "#ff0000",
+        "Charge": "#00ffff",
+        "Death from Above": "#ff00ff",
+    }
+
+
+
+
     //math constants
     const M = {
         f0: Math.sqrt(3),
@@ -130,6 +144,9 @@ const Main = (() => {
     }
 
 
+    function getKeyByValue(object, value) {
+        return Object.keys(object).find(key => object[key] === value);
+    }
 
 
     const SM = {
@@ -728,9 +745,13 @@ const Main = (() => {
             this.type = aa.type;
             let heights = {BattleMech: 2};
             this.height = heights[this.type];
-
-
-
+    
+            this.move = aa.move;
+            let moveSpecial = [];
+            if (aa.moveSpecial.includes("j")) {
+                moveSpecial.push("Jump");
+            }
+            this.moveSpecial = moveSpecial
 
 
 
@@ -775,8 +796,17 @@ const Main = (() => {
             return {facing: facing, targetArc: targetArc};
         }
 
+        SetStatus(type) {
+            this.token.set("aura1_color",moveStatuses[type]);
+        }
 
-       
+        GetStatus() {
+            let status = getKeyByValue(moveStatuses,this.token.get("aura1_color")) || "Unknown";
+            return status;
+        }
+
+
+
 
         Distance(b) {
             return HexMap[this.hexLabel].distance(HexMap[b.hexLabel]) - 1;
@@ -833,7 +863,14 @@ const Main = (() => {
             abilArray[a].remove();
         } 
         
-
+        //movement/activation
+        abilityName = "Activate";
+        action = "!Activate;?{Order|Standstill|Move|Sprint|Charge";
+        if (unit.moveSpecial.includes("Jump")) {
+            action += "|Jump|Death from Above";
+        }
+        action += "}";
+        AddAbility(abilityName,action,unit.charID);
 
 
 
@@ -1712,22 +1749,24 @@ log("Intervening: " + intervening)
             outputCard.body.push(state.MW.factions[i] + ": " + rolls[i]);
         }
         outputCard.body.push("[hr]");
-        outputCard.body.push(state.MW.factions[loser] + " moves a Unit first");
+        outputCard.body.push(state.MW.factions[loser] + " activates and moves a Unit first");
 
         let unitNumbers = [0,0];
         _.each(Units,unit => {
             unitNumbers[unit.player]++;
+            unit.SetStatus("Not Activated");
         })
 
-        if (unitNumbers[0] !== unitNumbers[1]) {
-            outputCard.body.push("Keeping in Mind Unequal # of Mechs Rule");
-        }
+
         outputCard.body.push("When both players have completed all their movement, Select Next Phase");
         PrintCard();
     }
 
     const Combat = () => {
-
+        //when start, set all transparent auras to black ie standstill
+        //non-initiative player attacks with all theirs, change auras to clear when done attack
+        //then initiative player
+        //apply resutls though in end phase
 
 
 
@@ -1736,14 +1775,85 @@ log("Intervening: " + intervening)
 
 
     const End = () => {
-
+        //apply damage, heat
+        //victory conditions
 
 
 
     }
 
 
+    const Activate = (msg) => {
+        let id = msg.selected[0]._id;
+        let unit = UnitArray[id];
+        let Tag = msg.content.split(";");
+        let order = Tag[1]; //Standstill, Move, Sprint, Jump
+        
+    //errors
+    //if in water and selects Jump, cant
 
+
+
+        let move = DeepCopy(unit.move);
+
+        if (move === 0) {
+            order = "Standstill";
+        }
+
+        SetupCard(unit.name,"Movement",unit.faction);
+        unit.SetStatus(order)
+        if (order === "Standstill") {
+            outputCard.body.push("The Mech can turn to face any direction, staying in the same hex");
+            outputCard.body.push("The Mech can Attack.")
+        }
+        if (order === "Move") {
+            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech can turn to face any direction");
+            outputCard.body.push("The Mech can Attack");
+        }
+        if (order === "Sprint") {
+            move = Math.round(move * 1.5);
+            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech can turn to face any direction");
+            outputCard.body.push("The Mech cannot Attack");
+        }
+        if (order === "Jump") {
+            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("It will ignore Terrain Costs");
+            outputCard.body.push("Movement must be in a Straight Line, but the Mech can turn to face any direction at the end");
+            outputCard.body.push("The Mech can Attack");
+        }
+        if (order === "Charge") {
+            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech must end facing the target");
+            outputCard.body.push("In the Attack Phase the Mech may do a Ram attack");
+        }
+        if (order === "Death from Above") {
+            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("It will ignore Terrain Costs");
+            outputCard.body.push("Movement must be in a Straight Line towards the target, the Mech must end facing the target");
+            outputCard.body.push("In the Attack Phase the Mech may do a Death from Above attack");
+        }
+
+
+        //workout next activating player
+        let nextPlayer = unit.player === 0 ? 1:0;
+        let togo = [0,0];
+        _.each(Units,unit2 => {
+            if (unit2.GetStatus() === "Not Activated") {
+                togo[unit2.player]++;
+            }
+        })
+        if (togo[unit.player] >= (2 * togo[nextPlayer])) {
+            outputCard.body.push("[hr]");
+            outputCard.body.push("Another Unit from this Faction should Move next");
+        }
+
+
+
+
+
+    }
 
 
 
@@ -1830,7 +1940,9 @@ log("Intervening: " + intervening)
             case '!NextPhase':
                 NextPhase();
                 break;
-
+            case '!Activate':
+                Activate(msg);
+                break;
 
         }
     };
