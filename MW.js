@@ -110,14 +110,16 @@ const Main = (() => {
 
 
     //terrain that is single object
+    //blockLOS - Semi = semi solid, eg woods, stops after 3, solid = buildings - stops after 1
+    //hills are covered by their elevation re blocking LOS
 
     const TerrainInfo = {
-        "Hill 1": {elevation: 1, terrainHeight: 0, moveCost: 1, cover: false, blockLOS: "Hill", },
-        "Hill 2": {elevation: 2, terrainHeight: 0, moveCost: 1, cover: false, blockLOS: "Hill", },
-        "Hill 3": {elevation: 3, terrainHeight: 0, moveCost: 1, cover: false, blockLOS: "Hill", },
-        "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, cover: true, blockLOS: "Woods", },
-        "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, cover: true, blockLOS: "Woods", },
-        "Rough": {elevation: 0, terrainHeight: 0, moveCost: 2, cover: false, blockLOS: false, },
+        "Hill 1": {elevation: 1, terrainHeight: 0, moveCost: 1, blockLOS: false, },
+        "Hill 2": {elevation: 2, terrainHeight: 0, moveCost: 1, blockLOS: false, },
+        "Hill 3": {elevation: 3, terrainHeight: 0, moveCost: 1, blockLOS: false, },
+        "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, blockLOS: "Semi", terrainModifier: "Woods"},
+        "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, blockLOS: "Semi", terrainModifier: "Woods"},
+        "Rough": {elevation: 0, terrainHeight: 0, moveCost: 2, blockLOS: false,},
 
 
 
@@ -1137,24 +1139,20 @@ log(pageInfo.page)
                 let label = centre.toCube().label()
                 let hex = HexMap[label];
                 if (hex) {
-                    if (hex.terrain === "Open" && name.includes("Hill") === false) {
+                    if (hex.terrain === "Open") {
                         hex.terrain = name;
                     } else {
                         hex.terrain += ", " + name;
                     }
                     if (terrain.blockLOS !== false) {
-                        if (hex.blockLOS === false) {
-                            hex.blockLOS = terrain.blockLOS;
-                        } else {
-                            hex.blockLOS = hex.blockLOS + ", " + terrain.blockLOS;
-                        }
-                    }
-                    if (terrain.cover === true) {
-                        hex.cover = true;
+                        hex.blockLOS = terrain.blockLOS;
                     }
                     hex.elevation = Math.max(terrain.elevation,hex.elevation);
                     hex.terrainHeight = Math.max(terrain.terrainHeight,hex.terrainHeight);
                     hex.moveCost = Math.max(terrain.moveCost,hex.moveCost);
+                    if (terrain.terrainModifier) {
+                        hex.terrainModifier = terrain.terrainModifier;
+                    }
                 }
             }
 
@@ -1473,19 +1471,6 @@ log(pageInfo.page)
 //each path gets a 2 (LOS), 1 (LOS on one path blocked), 0 (LOS on both paths blocked)
 //work out the final LOS %, adding up the 3 heights divide by 10 to get a fraction
 
-        let interCubes = [shooterHex.cube.linedraw(targetHex.cube),shooterHex.cube.linedraw2(targetHex.cube)];
-
-        let pt1 = new Point(0,shooterHeight);
-    for (let i=0;i<5;i++) {
-        let pt2 = new Point(distance,targetHeights[i]);
-        let pt3,pt4,line1;
-        for (let side=0;side<2;side++) {
-
-
-
-
-        }
-    }
 
 
 
