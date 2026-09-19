@@ -758,16 +758,21 @@ const Main = (() => {
         }
 
         Facing(b) {
-//rewrite
-
-
             let facing = "Front";
-            let phi = Angle(HexMap[this.hexLabel].cube.angle(HexMap[b.hexLabel].cube));
+            let targetArc = "Front";
+            let shooterCube = HexMap[this.hexLabel].cube;
+            let targetCube = HexMap[b.hexLabel].cube;
+            let phi = Angle(shooterCube.angle(targetCube));
             phi = Angle(phi - this.token.get("rotation"));
             if (phi > 90 && phi < 270) {
                 facing = "Rear";
             } 
-            return facing;
+            let gamma = Angle(targetCube.angle(shooterCube));
+            gamma = Angle(gamma - b.token.get("rotation"));
+            if (gamma >= 150 && gamma <= 210) {
+                targetArc = "Rear";
+            }
+            return {facing: facing, targetArc: targetArc};
         }
 
 
@@ -1458,25 +1463,22 @@ log(pageInfo.page)
         outputCard.body.push("Distance: " + losResult.distance + " hexes");
         outputCard.body.push("[hr]");
         if (losResult.los === false) {
-            outputCard.body.push("No LOS due to " + losResult.losReason + " at " + losResult.blockedHexLabel);
+            outputCard.body.push("No LOS due to " + losResult.reason + " at " + losResult.losBlockedAt);
         } else {
             outputCard.body.push("Target is in LOS");
-            if (losResult.cover === true || losResult.interCover === true) {
-                outputCard.body.push("Target is in Cover");
+            if (losResult.partial === true) {
+                outputCard.body.push("Target has Partial Cover +1");
             }
-            if (losResult.conceal === true || losResult.interConceal === true) {
-                outputCard.body.push("Target is Concealed");
+            if (losResult.terrainModifier !== 0) {
+                outputCard.body.push("Target has a Terrain Modifier of +" + losResult.terrainModifier);
+            }
+            if (losResult.underwater === true) {
+                outputCard.body.push("Both are Underwater");
             }
         }
-        if (shooter.type.includes("Unit") === false) {
-            let verb = (losResult.forwardArc) ? " is ": " is NOT ";
-            outputCard.body.push("The Target " + verb + " in the Forward Arc");
-        }
-        if (target.type === "Vehicle") {
-            let noun = (losResult.frontFacing) ? " Front ":" Rear ";
-            outputCard.body.push("Any Fire would hit the target in the " + noun + " Facing");
-        }
-
+        let facings = shooter.Facing(target);
+        outputCard.body.push("Target is in the " + facings.facing + " Facing");
+        outputCard.body.push("Target is being hit on the " + facings.targetArc + " Armour");
         PrintCard();
     }
 
