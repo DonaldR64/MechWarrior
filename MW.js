@@ -1849,7 +1849,7 @@ log("Intervening: " + intervening)
             outputCard.body.push("Another Unit from this Faction should Move next");
         }
 
-
+        PrintCard();
 
 
 
