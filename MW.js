@@ -1480,180 +1480,156 @@ log(pageInfo.page)
         PrintCard();
     }
 
-
-
-
-
     const LOS = (shooter,target) => {
         let shooterHex = HexMap[shooter.hexLabel];
         let targetHex = HexMap[target.hexLabel];
-        let distance = shooter.Distance(target) + 1;
-        let shooterHeight = shooterHex.elevation;
-        if (shooter.type === "BattleMech") {
-            shooterHeight += 2;
+        let distance = shooter.Distance(target);
+        //bring the bases to whichever is lower
+        let baseElevation = Math.min(shooterHex.elevation,targetHex.elevation);
+        let shooterElevation = shooterHex.elevation - baseElevation;
+        if (shooterHex.building === true && shooter.type === "BattleMech") {
+            shooterElevation += shooterHex.terrainHeight;
         }
-        let targetHeights = [targetHex.elevation];
-        //targetHeight, 2 for Battlemechs
-        let th;
-        if (target.type === "BattleMech") {
-            th = 2;
+        let shooterHeight = shooterElevation + shooter.height;
+        let targetElevation = targetHex.elevation - baseElevation;
+        if (targetHex.building === true && target.type === "BattleMech") {
+            targetElevation += targetHex.terrainHeight;
         }
-        for (let i=1;i<6;i++) {
-            targetHeights.push(targetHex.elevation + ((th/5)*i));
+        let targetHeight = targetElevation + target.height;
+
+        let interCubes = [shooterHex.cube.linedraw(targetHex.cube),shooterHex.cube.linedraw2(targetHex.cube)];
+        let interLabels = [interCubes[0].map((e)=> e.label()), interCubes[1].map((e)=> e.label())];
+        let len = labels[0].length;
+
+        let terrainModifier = 0; 
+        let partial = false;
+        let losBlockedAt = false, losReason = false;
+        let visibleSides = 0;
+        let underwater = false;
+        if (targetHex.water === true) {
+            if (targetHex.terrainHeight === 1) {
+                partial = true;
+            } else if (targetHex.terrainHeight > 1) {
+                if (shooterHex.water === true && shooterHex.terrainHeight > 1) {
+                    underwater = true;
+                } else {
+                    let result = {
+                        distance: distance,
+                        los: false,
+                        reason: "Target is Completely Underwater",
+                        losBlockedAt: targetHex.label,
+                        partial: false,
+                        terrainModifier: 0,
+                    }
+                    return result;
+                }
+            }
         }
-
-//run shooterHeight -> each of target Heights, running through both paths
-//each path gets a 2 (LOS), 1 (LOS on one path blocked), 0 (LOS on both paths blocked)
-//work out the final LOS %, adding up the 3 heights divide by 10 to get a fraction
-
-
 
 
 
         for (let side=0;side<2;side++) {
-            let blocking = 0;
+            let semi = 0;
+            let losSide = true;
             for (let i=0;i<len;i++) {
-                let interHex = HexMap[labels[side][i]];
-                //Hills
-                if (interHex.hill === true) {
-                    if (interHex.elevation > shooterHeight && interHex.elevation > targetHeight) {
-                        los[side] = false;
-                        losReason[side] = "Hill";
-                        blockedHexLabels[side] = interHex.label;
-                        break;
-                    }
+                let label = interLabels[side][i];
+                let interHex = HexMap[label];
+                //hills
+                let ihElevation = interHex.elevation - baseElevation;
+                if (ihElevation >= shooterHeight && ihElevation >= targetHeight) {
+                    losBlockedAt = label;
+                    losReason = "Hill";
+                    losSide = false;
+                    break;
+                }
+                if (i===0 && ihElevation >= shooterHeight) {
+                    losBlockedAt = label;
+                    losReason = "Hill";
+                    losSide = false;
+                    break;
+                }
+                if (i = (len-1) && ihElevation >= targetHeight) {
+                    losBlockedAt = label;
+                    losReason = "Hill";
+                    losBlockedAt.push(label);
+                    losSide = false;
+                    break;
                 }
 
-                //Intervening Friendly UnitArray at same elevation
-                if (interHex.tokenIDs.length > 0 && interHex.label !== targetHex.label) {
-                    let unit2 = UnitArray[interHex.tokenIDs[0]];
-                    if (unit2.faction === shooter.faction && shooterHeight === interHex.elevation && unit2.platoonID !== shooter.platoonID) {
-                        if (shooter.type.includes("Unit")  && unit2.type.includes( "Unit")) {
-                            los[side] = false;
-                            losReason[side] = unit2.name;
-                            blockedHexLabels[side] = interHex.label;
-                            break;
-                        }
-                        if (shooter.type.includes("Unit") === false && unit2.type.includes("Unit") === false) {
-                            los[side] = false;
-                            losReason[side] = unit2.name;
-                            blockedHexLabels[side] = interHex.label;
-                            break;
-                        }
-                    }
-                }
 
-                //Blocking Terrain or Cover Terrain
-                pt3 = new Point(i+1,0);
-                pt4 = new Point(i+1,(interHex.elevation + interHex.terrainHeight));
-                line1 = lineLine(pt1,pt2,pt3,pt4); //intersection
-            
-                if (line1) {
-                    if (interHex.cover === true) {
-                        interCover[side] = true;
+                //terrain
+                if (interHex.terrainHeight > 0) {
+                    let intervening = false;
+                    let ihTH = ihElevation + interHex.terrainHeight;
+                    if (ihTH >= shooterHeight && ihTH >= targetHeight) {
+                        intervening = true;
                     }
-                    if (interHex.conceal === true) {
-                        interConceal[side] = true;
+                    if (i===0 && ihTH >= shooterHeight) {
+                        intervening = true;
                     }
-                    if (interHex.conceal === "Infantry" && interConceal[side] === false && target.type.includes("Unit")) {
-                        interConceal[side] = true;
+                    if (i === (len-1) && ihTH >= targetHeight) {
+                        intervening = true;
                     }
-                    if (interHex.blockLOS === false && blocking > 0){
-                        los[side] = false;
-                        losReason[side] = "Other Side of " + interHex.terrain;
-                        blockedHexLabels[side] = interHex.label;
-                        break;
-                    } else {
-                        blocking++;
-                        if (blocking > interHex.block) {
-                            los[side] = false;
-                            losReason[side] = interHex.terrain;
-                            blockedHexLabels[side] = interHex.label;
+                    if (intervening === true) {
+                        if (interHex.blockLOS === "Solid") {
+                            losBlockedAt = label;
+                            losReason = interHex.terrain;
+                            losSide = false;
                             break;
                         }
-                    }
-                }
-
-                //edges
-                if (i > 1) {
-                    let dir = HexMap[labels[side][i-1]].cube.whatDirection(interHex.cube)
-                    let edge = HexMap[labels[side][i-1]].edges[dir];
-                    if (edge !== "Open") {
-                        let edgeInfo = EdgeInfo[edge];
-                        if (edgeInfo.blockLOS !== false && i < (len-edgeInfo.blockLOS)) {
-                            los[side] = false;
-                            losReason[side] = edge;
-                            blockedHexLabels[side] = interHex.label;
-                            break;
-                        }
-                        if (edge.conceal === true) {
-                            interConceal[side] = true;
-                        }
-                        if (i === len-1) {
-                            if (edge.cover === true) {
-                                interCover[side] = true;
+                        if (interHex.blockLOS === "Semi") {
+                            semi++;
+                            if (semi > 3) {
+                                losBlockedAt = label;
+                                losReason = "> 3 Hexes Woods";
+                                losSide = false;
+                                break;
                             }
                         }
+                        terrainModifier = Math.max(terrainModifier,interHex.terrainModifier);
                     }
                 }
+
+                //final interHex - partial cover
+                if (i === (len-1)) {
+                    if ((ihElevation - targetElevation) === 1 && shooterHeight <= targetHeight) {
+                        partial = true;
+                    }
+                }
+
+
+            }
+
+
+
+
+            if (losSide === true) {
+                visibleSides++;
             }
         }
 
-        if (los[0] === false && los[1] === false) {
+        if (visibleSides === 1) {
+            partial = true;
+        } 
+        if (visibleSides === 0) {
             finalLOS = false;
-            finalLOSReason = losReason[0];
-            finalBlockedHexLabel = blockedHexLabels[0];
-            if (losReason[0] !== losReason[1]) {
-                finalLOSReason += " / " + losReason[1];
-                finalBlockedHexLabel += " / " + blockedHexLabel[1];
-            }
-            finalLOSReason = "Blocked by " + finalLOSReason;
-        }
-
-        if (shooter.Offmap() === true) {
-            finalLOS = false;
-            finalLOSReason = "Shooter is Offmap";
-        }
-        if (target.Offmap() === true) {
-            finalLOS = false;
-            finalLOSReason = "Target is Offmap";
-        }
-
-        if (los[0] === true && los[1] === true) {
-            if (interCover[0] === true || interCover[1] === true) {
-                interCoverFinal = true;
-            }
-            if (interConceal[0] === true || interConceal[1] === true) {
-                interConcealFinal = true;
-            }
-        } else if (los[0] === false) {
-            interCoverFinal = interCover[1];
-            interConcealFinal = interConceal[1];
-        } else if (los[1] === false) {
-            interCoverFinal = interCover[0];
-            interConcealFinal = interConceal[0];
-        }
-
-        let cover = targetHex.cover;
-        let conceal = targetHex.conceal;
-        if (conceal === "Infantry" && target.type.includes("Unit")) {
-            conceal = true;
+        } else {
+            finalLOS = true;
         }
 
         let result = {
-            los: finalLOS,
-            losReason: finalLOSReason,
-            blockedHexLabel: finalBlockedHexLabel,
             distance: distance,
-            interCover: interCoverFinal,
-            interConceal: interConcealFinal,
-            cover: cover,
-            conceal: conceal,
-            forwardArc: shooter.Facing(target).forwardArc,
-            frontFacing: target.Facing(shooter).frontFacing,
+            los: finalLOS,
+            reason: losReason,
+            losBlockedAt: losBlockedAt,
+            partial: partial,
+            terrainModifier: terrainModifier,
+            underwater: underwater, //true or false if both underwater
         }
+
         return result;
     }
+
 
 
     const ErrorMsg = (msgs) => {
