@@ -113,14 +113,16 @@ const Main = (() => {
     //blockLOS - Semi = semi solid, eg woods, stops after 3, solid = buildings - stops after 1
     //hills are covered by their elevation re blocking LOS
 
-    const TerrainInfo = {
-        "Hill 1": {elevation: 1, terrainHeight: 0, moveCost: 1, blockLOS: false, },
-        "Hill 2": {elevation: 2, terrainHeight: 0, moveCost: 1, blockLOS: false, },
-        "Hill 3": {elevation: 3, terrainHeight: 0, moveCost: 1, blockLOS: false, },
-        "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, blockLOS: "Semi", terrainModifier: "Woods"},
-        "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, blockLOS: "Semi", terrainModifier: "Woods"},
-        "Rough": {elevation: 0, terrainHeight: 0, moveCost: 2, blockLOS: false,},
 
+    const TerrainInfo = {
+        "Hill 1": {elevation: 1, terrainHeight: 0, moveCost: 1},
+        "Hill 2": {elevation: 2, terrainHeight: 0, moveCost: 1},
+        "Hill 3": {elevation: 3, terrainHeight: 0, moveCost: 1},
+        "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, blockLOS: "Semi", terrainModifier: 1},
+        "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, blockLOS: "Semi", terrainModifier: 1},
+        "Rough": {elevation: 0, terrainHeight: 0, moveCost: 2},
+        "Water Depth 1": {elevation: 0, terrainHeight: 1, moveCost: 2, water: true, blockLOS: "Solid"},
+        "Water Depth 2": {elevation: 0, terrainHeight: 2, moveCost: 2, water: true, blockLOS: "Solid"},
 
 
 
@@ -668,10 +670,15 @@ const Main = (() => {
             this.label = offset.label();
             this.elevation = 0;
             this.terrainHeight = 0;
-            this.cover = false;
+            this.building = false;
+            this.water = false;
+
+
             this.blockLOS = false;
             this.moveCost = 1;
             this.road = false;
+            this.terrainModifier = "";
+
             HexMap[this.label] = this;
         }
 
@@ -718,7 +725,10 @@ const Main = (() => {
             }
             this.player = player;
             this.token = token;
-            
+            this.type == aa.type;
+            let heights = {BattleMech: 2};
+            this.height = heights[this.type];
+
 
 
 
@@ -1124,6 +1134,7 @@ log(pageInfo.page)
     const AddTerrain = () => {
         let start = Date.now();
 
+        let waterTokens = [];
         //Add Token Terrain, Building might be multihex
         let tokens = findObjs({_pageid: Campaign().get("playerpageid"),_type: "graphic",_subtype: "token",layer: "map",});
 
@@ -1147,18 +1158,42 @@ log(pageInfo.page)
                     if (terrain.blockLOS !== false) {
                         hex.blockLOS = terrain.blockLOS;
                     }
-                    hex.elevation = Math.max(terrain.elevation,hex.elevation);
+                    hex.elevation = terrain.elevation;
                     hex.terrainHeight = Math.max(terrain.terrainHeight,hex.terrainHeight);
                     hex.moveCost = Math.max(terrain.moveCost,hex.moveCost);
                     if (terrain.terrainModifier) {
                         hex.terrainModifier = terrain.terrainModifier;
                     }
+                    //buildings
+                    if (terrain.building === true) {
+                        hex.building = true;
+
+                    }
+                    //water - see below
+                    if (terrain.water === true) {
+                        waterTokens.push(token);
+                    }
                 }
             }
 
         });
+
+        _.each(waterTokens, token => {
+            let name = token.get("name") || " ";
+            name = name.split("//")[0].trim();
+            let terrain = TerrainInfo[name];
+            let centre = new Point(token.get("left"),token.get('top'));
+            let label = centre.toCube().label()
+            let hex = HexMap[label];
+            HexMap[label].elevation -= terrain.terrainHeight;
+            hex.water = true;
+        })
+
     
 /*
+
+
+
         //Roads
 //roads will allow movement to ignore 
 
