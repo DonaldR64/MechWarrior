@@ -518,12 +518,12 @@ const Main = (() => {
         }
         linedraw(b) {
             //returns array of hexes between this hex and hex 'b' excl. hex 'b'
-            var N = this.distance(b) - 1; //this drops b
+            var N = this.distance(b);
             var a_nudge = new Cube(this.q + 1e-06, this.r + 1e-06, this.s - 2e-06);
             var b_nudge = new Cube(b.q + 1e-06, b.r + 1e-06, b.s - 2e-06);
             var results = [];
             var step = 1.0 / Math.max(N, 1);
-            for (var i = 1; i <= N; i++) {
+            for (var i = 1; i < N; i++) {
                 results.push(a_nudge.lerp(b_nudge, step * i).round());
             }
             return results;
@@ -536,7 +536,7 @@ const Main = (() => {
             var b_nudge = new Cube(b.q - 1e-06, b.r - 1e-06, b.s + 2e-06);
             var results = [];
             var step = 1.0 / Math.max(N, 1);
-            for (var i = 1; i <= N; i++) {
+            for (var i = 1; i < N; i++) {
                 results.push(a_nudge.lerp(b_nudge, step * i).round());
             }
             return results;
@@ -725,7 +725,7 @@ const Main = (() => {
             }
             this.player = player;
             this.token = token;
-            this.type == aa.type;
+            this.type = aa.type;
             let heights = {BattleMech: 2};
             this.height = heights[this.type];
 
@@ -1501,7 +1501,11 @@ log(pageInfo.page)
 
         let interCubes = [shooterHex.cube.linedraw(targetHex.cube),shooterHex.cube.linedraw2(targetHex.cube)];
         let interLabels = [interCubes[0].map((e)=> e.label()), interCubes[1].map((e)=> e.label())];
-        let len = labels[0].length;
+        let len = interLabels[0].length;
+
+log("S: " + shooterHeight)
+log("T: " + targetHeight)
+
 
         let terrainModifier = 0; 
         let partial = false;
@@ -1528,34 +1532,37 @@ log(pageInfo.page)
             }
         }
 
-
-
         for (let side=0;side<2;side++) {
             let semi = 0;
             let losSide = true;
+log("Side: " + side)
+            interHexLoop:
             for (let i=0;i<len;i++) {
                 let label = interLabels[side][i];
                 let interHex = HexMap[label];
+
+log(i + ": " + label)
+log(interHex)
                 //hills
                 let ihElevation = interHex.elevation - baseElevation;
                 if (ihElevation >= shooterHeight && ihElevation >= targetHeight) {
                     losBlockedAt = label;
                     losReason = "Hill";
                     losSide = false;
-                    break;
+                    break interHexLoop;
                 }
                 if (i===0 && ihElevation >= shooterHeight) {
                     losBlockedAt = label;
                     losReason = "Hill";
                     losSide = false;
-                    break;
+                    break interHexLoop;
                 }
-                if (i = (len-1) && ihElevation >= targetHeight) {
+                if (i === (len-1) && ihElevation >= targetHeight) {
                     losBlockedAt = label;
                     losReason = "Hill";
                     losBlockedAt.push(label);
                     losSide = false;
-                    break;
+                    break interHexLoop;
                 }
 
 
@@ -1563,6 +1570,7 @@ log(pageInfo.page)
                 if (interHex.terrainHeight > 0) {
                     let intervening = false;
                     let ihTH = ihElevation + interHex.terrainHeight;
+log("ihTH: " + ihTH)
                     if (ihTH >= shooterHeight && ihTH >= targetHeight) {
                         intervening = true;
                     }
@@ -1572,12 +1580,13 @@ log(pageInfo.page)
                     if (i === (len-1) && ihTH >= targetHeight) {
                         intervening = true;
                     }
+log("Intervening: " + intervening)
                     if (intervening === true) {
                         if (interHex.blockLOS === "Solid") {
                             losBlockedAt = label;
                             losReason = interHex.terrain;
                             losSide = false;
-                            break;
+                            break interHexLoop ;
                         }
                         if (interHex.blockLOS === "Semi") {
                             semi++;
@@ -1585,7 +1594,7 @@ log(pageInfo.page)
                                 losBlockedAt = label;
                                 losReason = "> 3 Hexes Woods";
                                 losSide = false;
-                                break;
+                                break interHexLoop;
                             }
                         }
                         terrainModifier = Math.max(terrainModifier,interHex.terrainModifier);
@@ -1601,10 +1610,6 @@ log(pageInfo.page)
 
 
             }
-
-
-
-
             if (losSide === true) {
                 visibleSides++;
             }
