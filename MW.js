@@ -1407,8 +1407,8 @@ log(pageInfo.page)
             players: {},
             factions: [],
             turn: 0,
-            currentPlayer: 2,
-            firstPlayer: 2,
+            phase: "End",
+            initiativePlayer: 2,
             losLines: [],
         }
         sendChat("","Cleared State/Arrays");
@@ -1648,6 +1648,113 @@ log("Intervening: " + intervening)
     }
 
 
+    const NextPhase = () => {
+        let currentPhase = state.MW.phase;
+        let currentTurn = state.MW.turn;
+
+        if (currentTurn === 0) {
+
+
+
+        }
+
+        let phases = ["Initiative","Movement","Combat","End"];
+        let phaseNum = phases.indexOf(currentPhase);
+        phaseNum++;
+        if (phaseNum > phases.length) {
+            phaseNum = 0
+            currentTurn++;
+        };
+        currentPhase = phases[phaseNum];
+
+        state.MW.phase = currentPhase;
+        state.MW.turn = currentTurn;
+
+        switch(currentPhase) {
+            case 'Movement': 
+                Movement();
+                break;
+            case 'Combat':
+                Combat();
+                break;
+            case 'End':
+                End();
+                break;
+        }
+    }
+
+
+    const Movement = () => {
+        let rolls = [[],[]];
+        let totals = [0,0];
+        for (let p=0;p<2;p++) {
+            let roll = randomInteger(6);
+            totals[p] += roll;
+            rolls[p].push(DisplayDice(roll,state.MW.factions[p],24));
+        }
+        let winner = 2;
+        if (totals[0] === totals[1]) {
+            if (state.MW.initiativePlayer === 2) {
+                winner = randomInteger(2);
+            } else {
+                winner = (state.MW.initiativePlayer === 0) ? 1:0;
+            }
+        } else {
+            if (totals[0] > totals[1]) {
+                winner = 0;
+            } else {
+                winner = 1;
+            }
+        }
+        let loser = winner === 0 ? 1:0;
+        SetupCard("Movement","Turn " + state.MW.turn,state.MW.factions[winner]);
+        for (let i=0;i<2;i++) {
+            outputCard.body.push(state.MW.factions[i] + ": " + rolls[i]);
+        }
+        outputCard.body.push("[hr]");
+        outputCard.body.push(state.MW.factions[loser] + " moves a Unit first");
+
+        let unitNumbers = [0,0];
+        _.each(Units,unit => {
+            unitNumbers[unit.player]++;
+        })
+
+        if (unitNumbers[0] !== unitNumbers[1]) {
+            outputCard.body.push("Keeping in Mind Unequal # of Mechs Rule");
+        }
+        outputCard.body.push("When both players have completed all their movement, Select Next Phase");
+        PrintCard();
+    }
+
+    const Combat = () => {
+
+
+
+
+
+    }
+
+
+    const End = () => {
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1720,7 +1827,9 @@ log("Intervening: " + intervening)
             case '!Roll':
                 RollDice(msg);
                 break;
-            
+            case '!NextPhase':
+                NextPhase();
+                break;
 
 
         }
