@@ -21,7 +21,7 @@
         }
 
 //if distance is 0, should have LOS UNLESS one is fully underwater and other isnt
-
+//need to work water into this
 
         //run shooterHeight -> each of target Heights, running through both paths
         //each path gets a 2 (LOS), 1 (LOS on one path blocked), 0 (LOS on both paths blocked)
@@ -84,6 +84,13 @@
                 pathTotal += path;
             }
         }
+
+        let percentVisible = pathTotal * 10; //pathTotal should be from 0 to 10
+
+        if (percentVisible )
+
+
+
 
 
 
