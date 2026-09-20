@@ -1879,12 +1879,19 @@ log("Intervening: " + intervening)
                 let unit = new Unit(token.get("id"));
                 AddAbilities(unit);
                 unit.SetStatus("Not Activated");
+
+                let pilotName = Name(unit.faction);
+                unit.name = pilotName;
+
                 unit.token.set({
                     aura1_color: "transparent",
                     aura1_radius: .1,
                     aura1_options: "hex",
-
+                    name: pilotName,
                 });
+
+
+
             }
         });
 
