@@ -748,11 +748,11 @@ const Main = (() => {
     
             this.move = aa.move;
             let moveSpecial = [];
-            if (aa.moveSpecial.includes("j")) {
+            if (aa.movespecial && aa.movespecial.includes("j")) {
                 moveSpecial.push("Jump");
             }
-            this.moveSpecial = moveSpecial
-
+            this.moveSpecial = moveSpecial;
+    log(this.moveSpecial)
 
 
 
@@ -1150,7 +1150,7 @@ log(pageInfo.page)
      
     const AddTokens = () => {
         UnitArray = {};
-        //create an array of all tokens on both maps
+        //create an array of all tokens
         let tokens = findObjs({
             _pageid: Campaign().get("playerpageid"),
             _type: "graphic",
@@ -1810,29 +1810,29 @@ log("Intervening: " + intervening)
             outputCard.body.push("The Mech can Attack.")
         }
         if (order === "Move") {
-            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech has " + move + " MP");
             outputCard.body.push("The Mech can turn to face any direction");
             outputCard.body.push("The Mech can Attack");
         }
         if (order === "Sprint") {
             move = Math.round(move * 1.5);
-            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech has " + move + " MP");;
             outputCard.body.push("The Mech can turn to face any direction");
             outputCard.body.push("The Mech cannot Attack");
         }
         if (order === "Jump") {
-            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech has " + move + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
             outputCard.body.push("Movement must be in a Straight Line, but the Mech can turn to face any direction at the end");
             outputCard.body.push("The Mech can Attack");
         }
         if (order === "Charge") {
-            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech has " + move + " MP");;
             outputCard.body.push("The Mech must end facing the target");
             outputCard.body.push("In the Attack Phase the Mech may do a Ram attack");
         }
         if (order === "Death from Above") {
-            outputCard.body.push("The Mech has a Move of " + move);
+            outputCard.body.push("The Mech has " + move + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
             outputCard.body.push("Movement must be in a Straight Line towards the target, the Mech must end facing the target");
             outputCard.body.push("In the Attack Phase the Mech may do a Death from Above attack");
@@ -1842,14 +1842,18 @@ log("Intervening: " + intervening)
         //workout next activating player
         let nextPlayer = unit.player === 0 ? 1:0;
         let togo = [0,0];
-        _.each(Units,unit2 => {
+        _.each(UnitArray,unit2 => {
             if (unit2.GetStatus() === "Not Activated") {
                 togo[unit2.player]++;
             }
         })
-        if (togo[unit.player] >= (2 * togo[nextPlayer])) {
+        if (togo[unit.player] > 0 && togo[unit.player] >= (2 * togo[nextPlayer])) {
             outputCard.body.push("[hr]");
             outputCard.body.push("Another Unit from this Faction should Move next");
+        }
+        if (togo[unit.player] === 0 && togo[nextPlayer] === 0) {
+            outputCard.body.push("[hr]");
+            outputCard.body.push("After this Unit has finished its movement, can proceed to the Combat Phase");
         }
 
         PrintCard();
@@ -1859,7 +1863,35 @@ log("Intervening: " + intervening)
     }
 
 
+    const SetGame = () => {
 
+        UnitArray = {};
+        let tokens = findObjs({
+            _pageid: Campaign().get("playerpageid"),
+            _type: "graphic",
+            _subtype: "token",
+            layer: "objects",
+        });
+        
+        tokens.forEach((token) => {
+            let character = getObj("character", token.get("represents"));   
+            if (character) {
+                let unit = new Unit(token.get("id"));
+                AddAbilities(unit);
+                unit.SetStatus("Not Activated");
+                unit.token.set({
+                    aura1_color: "transparent",
+                    aura1_radius: .1,
+                    aura1_options: "hex",
+
+                });
+            }
+        });
+
+        sendChat("","Game Set");
+
+
+    }
 
 
 
@@ -1945,6 +1977,9 @@ log("Intervening: " + intervening)
                 break;
             case '!Activate':
                 Activate(msg);
+                break;
+            case '!SetGame':
+                SetGame();
                 break;
 
         }
