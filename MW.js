@@ -20,7 +20,7 @@ const Main = (() => {
         "Death from Above": "#ff00ff",
     }
 
-
+    const MoveMarkers = [];
 
 
     //math constants
