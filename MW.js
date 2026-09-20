@@ -98,7 +98,8 @@ const Main = (() => {
             "fontColour": "#000000",
             "borderColour": "#ff0000",
             "borderStyle": "5px ridge",
-            "names": ["Abbey","Abrams","Babcokc","Baker","Bell","Cameron","Carmichael","Davies","Drake","Dundee","Elm","Ferguson","Fischer","Garibaldi","Graham","Hartford","Highfield","Jenkins","Jepsen","Johnson","Kaminski","Kesselring","Lee","Marik","Marshall","Owens","Pascal","Robinson","Schneider","Thornton"]
+            "names": ["Abbey","Abrams","Babcokc","Baker","Bell","Cameron","Carmichael","Davies","Drake","Dundee","Elm","Ferguson","Fischer","Garibaldi","Graham","Hartford","Highfield","Jenkins","Jepsen","Johnson","Kaminski","Kesselring","Lee","Marik","Marshall","Owens","Pascal","Robinson","Schneider","Thornton"],
+            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","MW. ","MW. "],
         },
         "Clan Jade Falcon": {
             "image": "https://files.d20.io/images/501596890/57Ywz8MgvvNqOYv1vL0F0A/thumb.avif?1789866330",
@@ -108,7 +109,9 @@ const Main = (() => {
             "fontColour": "#FFFFFF",
             "borderColour": "#341F50",
             "borderStyle": "5px double",
-            "names": ["Bailey","Binetti","Calbot","Clees","Eodrap","Folker","Hazen","Helmer","Icaza","Isha","Littleton","Loudon","Malthus","Mattlov","Pryde","Roshak","Schtern","Sustan","Thastus","Viola"]
+            "names": ["Bailey","Binetti","Calbot","Clees","Eodrap","Folker","Hazen","Helmer","Icaza","Isha","Littleton","Loudon","Malthus","Mattlov","Pryde","Roshak","Schtern","Sustan","Thastus","Viola"],
+            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","MW. ","MW. "],
+
         },
         "Clan Wolf": {
             "image": "https://files.d20.io/images/501598815/dgUnUmoCtSayZJkw8eMWWA/thumb.avif?1789867478",
@@ -118,17 +121,30 @@ const Main = (() => {
             "fontColour": "#000000",
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
-            "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"]
+            "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"],
+            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","MW. ","MW. "],
         },
         "Clan Smoke Jaguar": {
-            "image": "https://files.d20.io/images/501598815/dgUnUmoCtSayZJkw8eMWWA/thumb.avif?1789867478",
+            "image": "https://files.d20.io/images/501599772/_FilZT_hOdIB-rL4WUpJLA/thumb.avif?1789868051",
             "dice": "Red",
-            "backgroundColour": "#ff0000",
+            "backgroundColour": "#545454",
             "titlefont": "Arial",
-            "fontColour": "#000000",
+            "fontColour": "#ffffff",
+            "borderColour": "#545454",
+            "borderStyle": "5px double",
+            "names": ["Bowen","Canto","Corbett","Dimitrov","Furey","Hoff","Howell","Ismirii","Kotare","Levi","Montezuma","Moon","Osis","Ott","Perez","Rippon","Showers","Stiles","Weaver","Wimmer","Yoshida"],
+            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","MW. ","MW. "],
+        },
+        "Northwind Highlanders": {
+            "image": "https://files.d20.io/images/501599833/Hx98oLbHV5JRWNLqWet13g/thumb.png?1789868093",
+            "dice": "White",
+            "backgroundColour": "#0018F9",
+            "titlefont": "Arial",
+            "fontColour": "#ffffff",
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
-            "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"]
+            "names": ["Alan","Allistar","Armstrong","Campbell","Cambell-Stewart","Cook","Doohan","Duffy","Evans","Forest","Graham","Henderson","Jacobs","Jaffray","Kirkpatrick","Logan","MacLeod","MacGregor","McHenry","MacIntosh","McCallan","McGraw","Macpherson","Patterson","Reynolds","Roberts","Stirling","Wallace"],
+            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","MW. ","MW. "],
         },
 
 
@@ -780,8 +796,8 @@ const Main = (() => {
                 moveSpecial.push("Jump");
             }
             this.moveSpecial = moveSpecial;
-    log(this.moveSpecial)
 
+            this.skill = parseInt(aa.skill) || 4;
 
 
 
@@ -1887,7 +1903,6 @@ log("Intervening: " + intervening)
         PrintCard();
 
 
-
     }
 
 
@@ -1906,22 +1921,27 @@ log("Intervening: " + intervening)
             if (character) {
                 let unit = new Unit(token.get("id"));
                 AddAbilities(unit);
+
                 unit.SetStatus("Not Activated");
-
-                let pilotName = Name(unit.faction);
-                unit.name = pilotName;
-
                 unit.token.set({
                     aura1_color: "transparent",
                     aura1_radius: .1,
                     aura1_options: "hex",
-                    name: pilotName,
                 });
-
-
-
             }
         });
+
+        let names = [DeepCopy(Factions[state.MW.factions[0]].names), DeepCopy(Factions[state.MW.factions[1]].names)];
+
+        _.each(UnitArray, unit => {
+            let skill = unit.skill;
+            let rank = Factions[unit.faction].ranks[skill];
+            let index = randomInteger(names[unit.player].length) - 1;
+            let name = names[unit.player].splice(index,1);
+            name = rank + name;
+            unit.name = name;
+            unit.token.set("name",name);
+        })
 
         sendChat("","Game Set");
 
