@@ -99,7 +99,7 @@ const Main = (() => {
             "borderColour": "#ff0000",
             "borderStyle": "5px ridge",
             "names": ["Abbey","Abrams","Babcokc","Baker","Bell","Cameron","Carmichael","Davies","Drake","Dundee","Elm","Ferguson","Fischer","Garibaldi","Graham","Hartford","Highfield","Jenkins","Jepsen","Johnson","Kaminski","Kesselring","Lee","Marik","Marshall","Owens","Pascal","Robinson","Schneider","Thornton"],
-            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","MW. ","MW. "],
+            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","",""],
         },
         "Clan Jade Falcon": {
             "image": "https://files.d20.io/images/501596890/57Ywz8MgvvNqOYv1vL0F0A/thumb.avif?1789866330",
@@ -110,7 +110,7 @@ const Main = (() => {
             "borderColour": "#341F50",
             "borderStyle": "5px double",
             "names": ["Bailey","Binetti","Calbot","Clees","Eodrap","Folker","Hazen","Helmer","Icaza","Isha","Littleton","Loudon","Malthus","Mattlov","Pryde","Roshak","Schtern","Sustan","Thastus","Viola"],
-            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","MW. ","MW. "],
+            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","",""],
 
         },
         "Clan Wolf": {
@@ -122,7 +122,7 @@ const Main = (() => {
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
             "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"],
-            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","MW. ","MW. "],
+            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","",""],
         },
         "Clan Smoke Jaguar": {
             "image": "https://files.d20.io/images/501599772/_FilZT_hOdIB-rL4WUpJLA/thumb.avif?1789868051",
@@ -133,7 +133,7 @@ const Main = (() => {
             "borderColour": "#545454",
             "borderStyle": "5px double",
             "names": ["Bowen","Canto","Corbett","Dimitrov","Furey","Hoff","Howell","Ismirii","Kotare","Levi","Montezuma","Moon","Osis","Ott","Perez","Rippon","Showers","Stiles","Weaver","Wimmer","Yoshida"],
-            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","MW. ","MW. "],
+            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","",""],
         },
         "Northwind Highlanders": {
             "image": "https://files.d20.io/images/501599833/Hx98oLbHV5JRWNLqWet13g/thumb.png?1789868093",
@@ -144,7 +144,7 @@ const Main = (() => {
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
             "names": ["Alan","Allistar","Armstrong","Campbell","Cambell-Stewart","Cook","Doohan","Duffy","Evans","Forest","Graham","Henderson","Jacobs","Jaffray","Kirkpatrick","Logan","MacLeod","MacGregor","McHenry","MacIntosh","McCallan","McGraw","Macpherson","Patterson","Reynolds","Roberts","Stirling","Wallace"],
-            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","MW. ","MW. "],
+            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","",""],
         },
 
 
@@ -1140,8 +1140,6 @@ const Main = (() => {
         pageInfo.width = pageInfo.page.get("width") * 70;
         pageInfo.height = pageInfo.page.get("height") * 70;
         pageInfo.type = pageInfo.page.get("grid_type");
-        pageInfo.offsetX = pageInfo.page.get("grid_offset_x");
-        pageInfo.offsetY = pageInfo.page.get("grid_offset_y");
 
 log(pageInfo.page)
 
@@ -1151,8 +1149,8 @@ log(pageInfo.page)
         let startTime = Date.now();
         HexMap = {};
 
-        let startX = HexInfo.pixelStart.x - pageInfo.offsetX;
-        let startY = HexInfo.pixelStart.y - pageInfo.offsetY;
+        let startX = HexInfo.pixelStart.x;
+        let startY = HexInfo.pixelStart.y;
         let halfToggleX = HexInfo.halfToggleX;
         let halfToggleY = HexInfo.halfToggleY;
         if (pageInfo.type === "hex") {
@@ -1475,8 +1473,7 @@ log(pageInfo.page)
     }
 
 
-    const ClearState = (msg) => {
-        let Tag = msg.content.split(";");
+    const ClearState = () => {
         LoadPage();
         RemoveDead();
         BuildMap();
@@ -1734,15 +1731,15 @@ log("Intervening: " + intervening)
         let currentTurn = state.MW.turn;
 
         if (currentTurn === 0) {
-
+            //placeholder
 
 
         }
-
-        let phases = ["Initiative","Movement","Combat","End"];
+log(currentPhase)
+        let phases = ["Movement","Combat","End"];
         let phaseNum = phases.indexOf(currentPhase);
         phaseNum++;
-        if (phaseNum > phases.length) {
+        if (phaseNum >= phases.length) {
             phaseNum = 0
             currentTurn++;
         };
@@ -1750,7 +1747,7 @@ log("Intervening: " + intervening)
 
         state.MW.phase = currentPhase;
         state.MW.turn = currentTurn;
-
+log(currentPhase)
         switch(currentPhase) {
             case 'Movement': 
                 Movement();
@@ -1796,9 +1793,10 @@ log("Intervening: " + intervening)
         outputCard.body.push(state.MW.factions[loser] + " activates and moves a Unit first");
 
         let unitNumbers = [0,0];
-        _.each(Units,unit => {
+        _.each(UnitArray,unit => {
             unitNumbers[unit.player]++;
             unit.SetStatus("Not Activated");
+            unit.startHexLabel = unit.hexLabel;
         })
 
 
@@ -1907,8 +1905,7 @@ log("Intervening: " + intervening)
 
 
     const SetGame = () => {
-
-        UnitArray = {};
+        ClearState();
         let tokens = findObjs({
             _pageid: Campaign().get("playerpageid"),
             _type: "graphic",
@@ -1941,6 +1938,7 @@ log("Intervening: " + intervening)
             name = rank + name;
             unit.name = name;
             unit.token.set("name",name);
+            unit.startHexLabel = unit.hexLabel;
         })
 
         sendChat("","Game Set");
@@ -1951,7 +1949,138 @@ log("Intervening: " + intervening)
 
 
 
+const aStar = (unit,goalHex) => {
+    let jump = (unit.GetStatus() === "Jump" || unit.GetStatus() === "Death from Above") ? true:false;
 
+    let startHex = HexMap[unit.startHexLabel];
+
+    let totalDistance = goalHex.distance(startHex);
+    let totalMove = DeepCopy(unit.move);
+    if (unit.GetStatus() === "Sprint") {
+        totalMove = Math.round(totalMove * 1.5);
+    }
+
+
+    let nodes = 1;
+    let explored = [];
+    let frontier = [{
+        label: startHex.label,
+        cost: 0,
+        estimate: totalDistance,
+    }]
+
+    while (frontier.length > 0) {
+        //sort paths in frontier by cost,lowest cost first
+        //choose lowest cost path from the frontier
+        //if more than one, choose one with highest cost       
+        frontier.sort(function(a,b) {
+            return a.estimate - b.estimate || b.cost - a.cost; //2nd part used if estimates are same
+        })
+        let node = frontier.shift();
+        let nodeHex = HexMap[node.label];
+        nodes++
+        //add this node to explored paths
+        explored.push(node);
+        //if this node reaches goal, end loop
+        if (node.label === goalHex.label) {
+            break;
+        }
+        //generate possible next steps
+        let next = HexMap[node.label].cube.neighbours(); // will be cubes
+        //for each possible next step
+        for (let i=0;i<next.length;i++) {
+            //calculate the cost of the next step 
+            //by adding the step's cost to the node's cost
+            let stepCube = next[i];
+            let stepHexLabel = stepCube.label();
+            let stepHex = HexMap[stepHexLabel];
+            if (!stepHex) {continue};
+            let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
+            let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
+            if (jump === true) {elevationChange = 0};
+            if (elevationChange > 2) {continue} //not allowed
+            stepHexCost += elevationChange;
+            let cost = stepHexCost + node.cost;
+            //check if this step has already been explored
+            let isExplored = (explored.find(e=> {
+                return e.label === stepHexLabel
+            }));
+            //avoid repeated nodes during the calculation of neighbours
+            let isFrontier = (frontier.find(e=> {
+                return e.label === stepHexLabel
+            }));
+            //if this step has not been explored
+            if (!isExplored && !isFrontier) {
+                let est = cost + stepHex.distance(goalHex);
+                //add the step to the frontier, using the cost and distance
+                frontier.push({
+                    label: stepHex.label,
+                    cost: cost,
+                    estimate: est,
+                });
+            }
+        }
+    }
+log(explored)
+    //If there are no paths left to explore or hit target hex
+    if (explored.length > 0) {
+        array = [];
+        results = [];
+        explored.sort((a,b) => {
+            return b.cost - a.cost;
+        })
+        let last = explored.shift(); //end hex
+        array.push(last);
+        let finished = explored.length > 0 ? false:true;
+
+        while (finished === false) {
+            let lowestCost = last.cost;
+            let current = 0;
+            for (let i=0;i<explored.length;i++) {
+                let next = explored[i];
+                if (HexMap[next.label].cube.distance(HexMap[last.label].cube) === 1 && next.cost < lowestCost) {
+                    lowestCost = next.cost;
+                    current = i;
+                }
+            }
+            last = explored[current];
+            explored.splice(current,1);
+            array.push(last);
+            if (last.label === startHex.label) {
+                finished = true;
+            }
+        }
+        array.reverse();
+
+        log(array)
+
+        //run through array, stop when reach units movement points (based on move vs sprint etc)
+        //place marker showing cost per hex
+        //might stop before end
+        let usedMP = 0;
+        for (let i=0;i<array.length;i++) {
+            let node = array[i];
+            let nodeCost = node.cost - usedMP;
+            if (node.cost > totalMove) {
+                break;
+            }
+            //place marker showing nodeCost ie. cost for that hex
+            usedMP += nodeCost;
+            results.push(node);
+        }
+
+        //move unit back to last hex in results
+        let lastNode = results[results.length - 1];
+        let lastHex = HexMap[lastNode.label];
+        unit.token.set({
+            left: lastHex.centre.x,
+            top: lastHex.centre.y,
+        })
+
+    } else {
+        sendChat("","No Path");
+    }
+}
 
 
 
@@ -1971,6 +2100,11 @@ log("Intervening: " + intervening)
                 HexMap[newLabel].tokenIDs.push(tok.id);
             }
             unit.hexLabel = newLabel;
+            aStar(unit,HexMap[newLabel]);
+//adjust this later to stop unit at max move or dont even run aStar if standstill        
+
+
+
         } 
         if (unit && tok.get("rotation") !== prev.rotation) {
             log(unit.name + " turning")
