@@ -90,24 +90,50 @@ const Main = (() => {
     let outputCard = {title: "",subtitle: "",side: "",body: [],buttons: [],};
 
     const Factions = {
-        "Inner Sphere": {
-            "image": "",
-            "dice": "Sphere",
-            "backgroundColour": "#FFFF00",
+        "ComStar": {
+            "image": "https://files.d20.io/images/501598357/Mdio9JvkjVEkngGRJetqPw/thumb.png?1789867196",
+            "dice": "White",
+            "backgroundColour": "#90D5FF",
             "titlefont": "Anton",
             "fontColour": "#000000",
-            "borderColour": "#FFFF00",
+            "borderColour": "#ff0000",
             "borderStyle": "5px ridge",
+            "names": ["Abbey","Abrams","Babcokc","Baker","Bell","Cameron","Carmichael","Davies","Drake","Dundee","Elm","Ferguson","Fischer","Garibaldi","Graham","Hartford","Highfield","Jenkins","Jepsen","Johnson","Kaminski","Kesselring","Lee","Marik","Marshall","Owens","Pascal","Robinson","Schneider","Thornton"]
         },
-        "Clan": {
-            "image": "",
-            "dice": "Clan",
-            "backgroundColour": "#0000ff",
+        "Clan Jade Falcon": {
+            "image": "https://files.d20.io/images/501596890/57Ywz8MgvvNqOYv1vL0F0A/thumb.avif?1789866330",
+            "dice": "Red",
+            "backgroundColour": "#417944",
             "titlefont": "Arial",
             "fontColour": "#FFFFFF",
-            "borderColour": "#0000ff",
+            "borderColour": "#341F50",
             "borderStyle": "5px double",
+            "names": ["Bailey","Binetti","Calbot","Clees","Eodrap","Folker","Hazen","Helmer","Icaza","Isha","Littleton","Loudon","Malthus","Mattlov","Pryde","Roshak","Schtern","Sustan","Thastus","Viola"]
         },
+        "Clan Wolf": {
+            "image": "https://files.d20.io/images/501598815/dgUnUmoCtSayZJkw8eMWWA/thumb.avif?1789867478",
+            "dice": "Red",
+            "backgroundColour": "#ff0000",
+            "titlefont": "Arial",
+            "fontColour": "#000000",
+            "borderColour": "#ff0000",
+            "borderStyle": "5px double",
+            "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"]
+        },
+        "Clan Smoke Jaguar": {
+            "image": "https://files.d20.io/images/501598815/dgUnUmoCtSayZJkw8eMWWA/thumb.avif?1789867478",
+            "dice": "Red",
+            "backgroundColour": "#ff0000",
+            "titlefont": "Arial",
+            "fontColour": "#000000",
+            "borderColour": "#ff0000",
+            "borderStyle": "5px double",
+            "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"]
+        },
+
+
+
+
 
         "Neutral": {
             "image": "",
@@ -120,6 +146,8 @@ const Main = (() => {
         },
 
     };
+
+    
 
 
 
