@@ -1788,19 +1788,22 @@ log("Intervening: " + intervening)
         let unit = UnitArray[id];
         let Tag = msg.content.split(";");
         let order = Tag[1]; //Standstill, Move, Sprint, Jump
-        
-    //errors
-    //if in water and selects Jump, cant
+        SetupCard(unit.name,order,unit.faction);
 
-
+        let hex = HexMap[unit.hexLabel];
+        if (hex.water === true && (order === "Jump" || order === "Death from Above")) {
+            outputCard.body.push("Unit cannot Jump from Water");
+            PrintCard();
+            return;
+        }
 
         let move = DeepCopy(unit.move);
 
         if (move === 0) {
             order = "Standstill";
+            outputCard.subtitle = "Standstill";
         }
 
-        SetupCard(unit.name,"Movement",unit.faction);
         unit.SetStatus(order)
         if (order === "Standstill") {
             outputCard.body.push("The Mech can turn to face any direction, staying in the same hex");
