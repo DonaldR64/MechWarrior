@@ -392,7 +392,7 @@
             let moveMax = values.move_max;
             let ratios = [1,.5,.25,.125,.0625];
             let move = Math.floor(moveMax * ratios[mpCrit]);
-            move = Math.min(move,moveMax - mpCrit); //min 1 hex reduction per crit level
+            move = Math.min(move,Math.max(moveMax - mpCrit,0)); //min 1 hex reduction per crit level
             let movestatus = "White";
             if (move < moveMax) {
                 movestatus = "Yellow";
@@ -405,13 +405,13 @@
             let jumpMove = "";
             if (jumpMoveMax) {
                 jumpMove = Math.floor(jumpMoveMax * ratios[mpCrit]);
-                jumpMove = Math.min(jumpMove,jumpMoveMax - mpCrit);
+                jumpMove = Math.min(jumpMove,Math.max(jumpMoveMax - mpCrit,0));
             }
 
 
             let tmmMax = values.tmm_max;
             let tmm = Math.floor(tmmMax * ratios[mpCrit]);
-            tmm = Math.min(tmm,tmmMax - mpCrit); //min 1 per level
+            tmm = Math.min(tmm,Math.max(tmmMax - mpCrit,)); //min 1 per level
             let tmmstatus = "White";
             if (tmm < tmmMax) {
                 tmmstatus = "Yellow";
