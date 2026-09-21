@@ -2012,19 +2012,24 @@ log("Cost: " + cost);
             let isExplored = (explored.find(e=> {
                 return e.label === stepHexLabel
             }));
+            if (isExplored) {
+                if (cost < isExplored.cost) {
+                    let dif = isExplored.cost - cost;
+                    isExplored.cost -= dif;
+                    isExplored.estimate -= dif;
+                }
+            }
             //avoid repeated nodes during the calculation of neighbours
             let isFrontier = (frontier.find(e=> {
                 return e.label === stepHexLabel;
             }));
             if (isFrontier) {
                 if (cost < isFrontier.cost) {
-                    isFrontier.cost = cost;
-log("Cost Adjusted")
+                    let dif = isFrontier.cost - cost;
+                    isFrontier.cost -= dif;
+                    isFrontier.estimate -= dif;
                 }
             }
-
-
-
 
             //if this step has not been explored
             if (!isExplored && !isFrontier) {
