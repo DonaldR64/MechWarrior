@@ -1593,10 +1593,10 @@ log("T: " + targetHeight)
         let visibleSides = 0;
         let underwater = false;
         if (targetHex.water === true) {
-            if (targetHex.terrainHeight === 1) {
+            if (targetHex.terrainHeight < target.height) {
                 partial = true;
-            } else if (targetHex.terrainHeight > 1) {
-                if (shooterHex.water === true && shooterHex.terrainHeight > 1) {
+            } else {
+                if (shooterHex.water === true && shooterHex.terrainHeight > shooter.height) {
                     underwater = true;
                 } else {
                     let result = {
@@ -1683,7 +1683,7 @@ log("Intervening: " + intervening)
 
                 //final interHex - partial cover
                 if (i === (len-1)) {
-                    if ((ihElevation - targetElevation) === 1 && shooterHeight <= targetHeight) {
+                    if ((ihElevation - targetElevation) === 1 && shooterHeight <= targetHeight && target.type === "BattleMech") {
                         partial = true;
                     }
                 }
@@ -1990,13 +1990,13 @@ log(currentPhase)
             nodes++
             //add this node to explored paths
             explored.push(node);
-    log("Explored")
-    log(explored)
+    //log("Explored")
+    //log(explored)
             //if this node reaches goal, end loop
             if (node.label === goalHex.label) {
                 break;
             }
-    log("Node: " + node.label);
+    //log("Node: " + node.label);
             //generate possible next steps
             let next = HexMap[node.label].cube.neighbours(); // will be cubes
             //for each possible next step
@@ -2007,7 +2007,7 @@ log(currentPhase)
                 let stepHexLabel = stepCube.label();
                 if (stepHexLabel === undefined) {continue};
 
-    log("stepHexLabel: " + stepHexLabel);
+    //log("stepHexLabel: " + stepHexLabel);
                 let stepHex = HexMap[stepHexLabel];
                 if (!stepHex) {continue};
                 if (stepHex.offmap === true) {continue};
@@ -2015,10 +2015,16 @@ log(currentPhase)
                 let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
                 let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
                 if (jump === true) {elevationChange = 0};
+                if (unit.type === "BattleMech" && elevationChange > 2) {
+                    continue;
+                } else if (unit.type !== "BattleMech" && elevationChange > 1) {
+                    continue;
+                }
+
                 if (elevationChange > 2) {continue} //not allowed
                 stepHexCost += elevationChange;
                 let cost = stepHexCost + node.cost;
-    log("Cost: " + cost);
+    //log("Cost: " + cost);
                 //check if this step has already been explored
                 let isExplored = (explored.find(e=> {
                     return e.label === stepHexLabel
@@ -2054,7 +2060,7 @@ log(currentPhase)
                 }
             }
         }
-    log(explored)
+    //log(explored)
         //If there are no paths left to explore or hit target hex
         if (explored.length > 0) {
             array = [];
@@ -2085,7 +2091,7 @@ log(currentPhase)
             }
             array.reverse();
 
-            log(array)
+            //log(array)
 
             //run through array, stop when reach units movement points (based on move vs sprint etc)
             //place marker showing cost per hex
