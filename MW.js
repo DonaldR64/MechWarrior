@@ -789,12 +789,16 @@ const Main = (() => {
             let heights = {BattleMech: 2};
             this.height = heights[this.type];
     
-            this.move = aa.move;
+            this.move = parseInt(aa.move);
             let moveSpecial = [];
             if (aa.movespecial && aa.movespecial.includes("j")) {
                 moveSpecial.push("Jump");
             }
             this.moveSpecial = moveSpecial;
+            if (moveSpecial.includes("Jump")) {
+                this.jumpMove = parseInt(aa.jumpmove) || this.move;
+            }
+
 
             this.skill = parseInt(aa.skill) || 4;
 
@@ -1846,6 +1850,7 @@ log(currentPhase)
         }
 
         let move = DeepCopy(unit.move);
+        let jumpMove = DeepCopy(unit.jumpmove);
 
         if (move === 0) {
             order = "Standstill";
@@ -1869,7 +1874,7 @@ log(currentPhase)
             outputCard.body.push("The Mech cannot Attack");
         }
         if (order === "Jump") {
-            outputCard.body.push("The Mech has " + move + " MP");;
+            outputCard.body.push("The Mech has " + jumpMove + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
             outputCard.body.push("Movement must be in a Straight Line, but the Mech can turn to face any direction at the end");
             outputCard.body.push("The Mech can Attack");
@@ -1880,7 +1885,7 @@ log(currentPhase)
             outputCard.body.push("In the Attack Phase the Mech may do a Ram attack");
         }
         if (order === "Death from Above") {
-            outputCard.body.push("The Mech has " + move + " MP");;
+            outputCard.body.push("The Mech has " + jumpMove + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
             outputCard.body.push("Movement must be in a Straight Line towards the target, the Mech must end facing the target");
             outputCard.body.push("In the Attack Phase the Mech may do a Death from Above attack");
@@ -2014,7 +2019,7 @@ log(currentPhase)
 
                 let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
                 let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
-                if (jump === true) {elevationChange = 0};
+                if (jump === true && elevationChange <= ) {elevationChange = 0};
                 if (unit.type === "BattleMech" && elevationChange > 2) {
                     continue;
                 } else if (unit.type !== "BattleMech" && elevationChange > 1) {
