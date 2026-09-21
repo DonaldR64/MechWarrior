@@ -60,6 +60,8 @@
                 <option value="">Nil</option>
                 <option value="j">Jump</option>
             </select>            
+            <label>Jump Move Max (only if different):</label><input type="number" name="attr_jumpmove_max">
+
             <label>TMM Max:</label><input type="number" name="attr_tmm_max">
         </div>
         <div class="col">
@@ -190,7 +192,7 @@
                 <section class="move f-center">
                     <h3>Move</h3>
                     <div>
-                        <h3><span name="attr_move"></span> <span name="attr_movespecial"></span></h3>
+                        <h3><span name="attr_movedisplay"></span></h3>
                     </div>
                 </section>
 
@@ -353,14 +355,14 @@
     });
 
     on("sheet:opened", function() {
-        getAttrs(["enginecrit",'fccritlevel','mpcritlevel','wpcritlevel','heat','move_max',"tmm_max","damShort_max","damMed_max","damLong_max","armour","armour_max","structure","structure_max","character_name"], function(values) {
+        getAttrs(["enginecrit",'fccritlevel','mpcritlevel','wpcritlevel','heat','move_max',"tmm_max","damShort_max","damMed_max","damLong_max","armour","armour_max","structure","structure_max","character_name","jumpmove_max",movespecial], function(values) {
             
             let name = values.character_name;
             name = name.split("//")[0].trim();
-            let engineCrit = parseInt(values.enginecrit);
-            let fcCrit = parseInt(values.fccritlevel);
-            let mpCrit = parseInt(values.mpcritlevel);
-            let wpCrit = parseInt(values.wpcritlevel);
+            let engineCrit = parseInt(values.enginecrit) || 0;
+            let fcCrit = parseInt(values.fccritlevel) || 0;
+            let mpCrit = parseInt(values.mpcritlevel) || 0;
+            let wpCrit = parseInt(values.wpcritlevel) || 0;
 
             let greendot = "https://files.d20.io/images/501354665/YxIXZgyqIHPwfjQ_XVZu3Q/thumb.png?1789692122";
             let reddot = "https://files.d20.io/images/501354284/8g7GBj3vrwxESRkfcoRa5g/thumb.png?1789691985"
@@ -388,7 +390,9 @@
             if (values.heat === "S") {heatstatus = "Black"};
 
             let moveMax = values.move_max;
-            let move = Math.max(0,moveMax - mpCrit);
+            let ratios = [1,.5,.25,.125,.0625];
+            let move = Math.floor(moveMax * ratios[mpCrit]);
+            move = Math.min(move,moveMax - mpCrit); //min 1 hex reduction per crit level
             let movestatus = "White";
             if (move < moveMax) {
                 movestatus = "Yellow";
@@ -396,8 +400,18 @@
             if (move === 0) {
                 movestatus = "Black";
             }
+
+            let jumpMoveMax = values.jumpmove_max || "";
+            let jumpMove = "";
+            if (jumpMoveMax) {
+                jumpMove = Math.floor(jumpMoveMax * ratios[mpCrit]);
+                jumpMove = Math.min(jumpMove,jumpMoveMax - mpCrit);
+            }
+
+
             let tmmMax = values.tmm_max;
-            let tmm = Math.max(0,tmmMax - mpCrit);
+            let tmm = Math.floor(tmmMax * ratios[mpCrit]);
+            tmm = Math.min(tmm,tmmMax - mpCrit); //min 1 per level
             let tmmstatus = "White";
             if (tmm < tmmMax) {
                 tmmstatus = "Yellow";
@@ -455,7 +469,14 @@
                 longStatus = "Red";
             }
 
-
+            let moveDisplay = move;
+            let moveSpecial = values.movespecial;
+            if (moveSpecial) {
+                moveDisplay += " " + moveSpecial;
+            }
+            if (jumpMove) {
+                moveDisplay = move + " / " + jumpMove + "j"
+            }
 
 
 
@@ -487,8 +508,8 @@
                 "shortstatus": shortStatus,
                 "medstatus": medStatus,
                 "longstatus": longStatus,
-
-
+                "jumpmove": jumpMove,
+                "movedisplay": moveDisplay,
             });
 
 
