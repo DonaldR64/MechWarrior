@@ -411,7 +411,7 @@
 
             let tmmMax = values.tmm_max;
             let tmm = Math.floor(tmmMax * ratios[mpCrit]);
-            tmm = Math.min(tmm,Math.max(tmmMax - mpCrit,)); //min 1 per level
+            tmm = Math.min(tmm,Math.max(tmmMax - mpCrit,0)); //min 1 per level
             let tmmstatus = "White";
             if (tmm < tmmMax) {
                 tmmstatus = "Yellow";
