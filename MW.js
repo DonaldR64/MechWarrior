@@ -20,8 +20,7 @@ const Main = (() => {
         "Death from Above": "#ff00ff",
     }
 
-    const MoveMarkers = [];
-
+    const MoveMarkers = ["https://files.d20.io/images/344441274/R0eEVMFzhYmwv6rigIA7GA/thumb.png?1685718541","https://s3.amazonaws.com/files.d20.io/images/435360245/m3tKJi3Pqb_40g75O6ouSg/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360246/pXI3HBrGMZ05ldDfH-zYCQ/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360229/JKMY922qxhf0E3z1l10jQg/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360228/YDGEQNR_qVFprdHJSjYNPg/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360232/1TysQcieJ5zbgYvXV4pqiA/thumb.png?1743563857","https://s3.amazonaws.com/files.d20.io/images/435360240/KfCmoF5WyWTStCWOTPrkJg/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360230/zjvzMFGWotZUORDeIVXrEw/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360226/-TXBFvMfahwOIjXEuS0mTQ/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360237/gEr7oP4z0ByUKTXpvSHYQQ/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360241/2HAnTYlC0uVR6mqyMoaACA/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360244/CDOLr8RkQ-pPhwjaOHTbEA/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360243/023KSjjB8QHtrMNbuO3ENQ/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360242/xx2msq4HjqRN5dUaPl0vfA/thumb.png?1743563857","https://s3.amazonaws.com/files.d20.io/images/435360236/L-iuGURhzreq2t2mKOj3Qg/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360247/v2Y15K10F2qZK268wPzYyw/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360239/SXny1fVCh5PeYxLGtnoPTA/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360233/EdB3z27csNyykkc2lWTefw/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360227/JpFvEVLKlKV6n6JsE8zrVg/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360234/5b2XrhzPgfgjdoI5y97LnQ/thumb.png?174356385","https://s3.amazonaws.com/files.d20.io/images/435360238/_sWU7YtYJsWT1NZC-wb80Q/thumb.png?1743563857","https://s3.amazonaws.com/files.d20.io/images/435360231/n7HVTuMwWch59Aofq1v96w/thumb.png?1743563856","https://s3.amazonaws.com/files.d20.io/images/435360235/yVtSNUPJOkxq0n2_FknMcA/thumb.png?1743563856"];
 
     //math constants
     const M = {
@@ -194,7 +193,7 @@ const Main = (() => {
 
 
     const SM = {
-        
+        immobile: "status_interdiction",
     }
 
 
@@ -1474,6 +1473,7 @@ log(pageInfo.page)
     const ClearState = () => {
         LoadPage();
         RemoveDead();
+        RemoveMoveMarkers();
         BuildMap();
 
         //clear arrays
@@ -1486,6 +1486,7 @@ log(pageInfo.page)
             phase: "End",
             initiativePlayer: 2,
             losLines: [],
+            moveMarkers: [],
         }
         sendChat("","Cleared State/Arrays");
     }
@@ -1495,6 +1496,9 @@ log(pageInfo.page)
         let tokens = findObjs({_pageid: Campaign().get("playerpageid"),_type: "graphic",_subtype: "token",layer: "map",});
         _.each(tokens,token => {
             if (token.get("status_dead") === true) {
+                token.remove();
+            }
+            if (token.get("name") === "Map Marker") {
                 token.remove();
             }
         })
@@ -1745,6 +1749,9 @@ log(currentPhase)
 
         state.MW.phase = currentPhase;
         state.MW.turn = currentTurn;
+
+        RemoveMoveMarkers();
+
 log(currentPhase)
         switch(currentPhase) {
             case 'Movement': 
@@ -1824,6 +1831,7 @@ log(currentPhase)
 
 
     const Activate = (msg) => {
+        RemoveMoveMarkers();
         let id = msg.selected[0]._id;
         let unit = UnitArray[id];
         let Tag = msg.content.split(";");
@@ -1947,164 +1955,203 @@ log(currentPhase)
 
 
 
-const aStar = (unit,goalHex) => {
-    let jump = (unit.GetStatus() === "Jump" || unit.GetStatus() === "Death from Above") ? true:false;
+    const aStar = (unit,goalHex) => {
 
-    let startHex = HexMap[unit.startHexLabel];
+        RemoveMoveMarkers();
 
-    let totalDistance = goalHex.distance(startHex);
-    let totalMove = DeepCopy(unit.move);
-    if (unit.GetStatus() === "Sprint") {
-        totalMove = Math.round(totalMove * 1.5);
-    }
+        let jump = (unit.GetStatus() === "Jump" || unit.GetStatus() === "Death from Above") ? true:false;
 
+        let startHex = HexMap[unit.startHexLabel];
 
-    let nodes = 1;
-    let explored = [];
-    let frontier = [{
-        label: startHex.label,
-        cost: 0,
-        estimate: totalDistance,
-    }]
-
-    while (frontier.length > 0) {
-        //sort paths in frontier by cost,lowest cost first
-        //choose lowest cost path from the frontier
-        //if more than one, choose one with highest cost       
-        frontier.sort(function(a,b) {
-            return a.estimate - b.estimate || b.cost - a.cost; //2nd part used if estimates are same
-        })
-        let node = frontier.shift();
-        let nodeHex = HexMap[node.label];
-        nodes++
-        //add this node to explored paths
-        explored.push(node);
-log("Explored")
-log(explored)
-        //if this node reaches goal, end loop
-        if (node.label === goalHex.label) {
-            break;
+        let totalDistance = goalHex.distance(startHex);
+        let totalMove = DeepCopy(unit.move);
+        if (unit.GetStatus() === "Sprint") {
+            totalMove = Math.round(totalMove * 1.5);
         }
-log("Node: " + node.label);
-        //generate possible next steps
-        let next = HexMap[node.label].cube.neighbours(); // will be cubes
-        //for each possible next step
-        for (let i=0;i<next.length;i++) {
-            //calculate the cost of the next step 
-            //by adding the step's cost to the node's cost
-            let stepCube = next[i];
-            let stepHexLabel = stepCube.label();
-            if (stepHexLabel === undefined) {continue};
 
-log("stepHexLabel: " + stepHexLabel);
-            let stepHex = HexMap[stepHexLabel];
-            if (!stepHex) {continue};
-            if (stepHex.offmap === true) {continue};
 
-            let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
-            let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
-            if (jump === true) {elevationChange = 0};
-            if (elevationChange > 2) {continue} //not allowed
-            stepHexCost += elevationChange;
-            let cost = stepHexCost + node.cost;
-log("Cost: " + cost);
-            //check if this step has already been explored
-            let isExplored = (explored.find(e=> {
-                return e.label === stepHexLabel
-            }));
-            if (isExplored) {
-                if (cost < isExplored.cost) {
-                    let dif = isExplored.cost - cost;
-                    isExplored.cost -= dif;
-                    isExplored.estimate -= dif;
-                }
-            }
-            //avoid repeated nodes during the calculation of neighbours
-            let isFrontier = (frontier.find(e=> {
-                return e.label === stepHexLabel;
-            }));
-            if (isFrontier) {
-                if (cost < isFrontier.cost) {
-                    let dif = isFrontier.cost - cost;
-                    isFrontier.cost -= dif;
-                    isFrontier.estimate -= dif;
-                }
-            }
+        let nodes = 1;
+        let explored = [];
+        let frontier = [{
+            label: startHex.label,
+            cost: 0,
+            estimate: totalDistance,
+        }]
 
-            //if this step has not been explored
-            if (!isExplored && !isFrontier) {
-                let est = cost + stepHex.distance(goalHex);
-                //add the step to the frontier, using the cost and distance
-                frontier.push({
-                    label: stepHex.label,
-                    cost: cost,
-                    estimate: est,
-                });
-            }
-        }
-    }
-log(explored)
-    //If there are no paths left to explore or hit target hex
-    if (explored.length > 0) {
-        array = [];
-        results = [];
-        explored.sort((a,b) => {
-            return b.cost - a.cost;
-        })
-        let last = explored.shift(); //end hex
-        array.push(last);
-        let finished = explored.length > 0 ? false:true;
-
-        while (finished === false) {
-            let lowestCost = last.cost;
-            let current = 0;
-            for (let i=0;i<explored.length;i++) {
-                let next = explored[i];
-                if (HexMap[next.label].cube.distance(HexMap[last.label].cube) === 1 && next.cost < lowestCost) {
-                    lowestCost = next.cost;
-                    current = i;
-                }
-            }
-            last = explored[current];
-            explored.splice(current,1);
-            array.push(last);
-            if (last.label === startHex.label) {
-                finished = true;
-            }
-        }
-        array.reverse();
-
-        log(array)
-
-        //run through array, stop when reach units movement points (based on move vs sprint etc)
-        //place marker showing cost per hex
-        //might stop before end
-        let usedMP = 0;
-        for (let i=0;i<array.length;i++) {
-            let node = array[i];
-            let nodeCost = node.cost - usedMP;
-            if (node.cost > totalMove) {
+        while (frontier.length > 0) {
+            //sort paths in frontier by cost,lowest cost first
+            //choose lowest cost path from the frontier
+            //if more than one, choose one with highest cost       
+            frontier.sort(function(a,b) {
+                return a.estimate - b.estimate || b.cost - a.cost; //2nd part used if estimates are same
+            })
+            let node = frontier.shift();
+            let nodeHex = HexMap[node.label];
+            nodes++
+            //add this node to explored paths
+            explored.push(node);
+    log("Explored")
+    log(explored)
+            //if this node reaches goal, end loop
+            if (node.label === goalHex.label) {
                 break;
             }
-            //place marker showing nodeCost ie. cost for that hex
-            usedMP += nodeCost;
-            results.push(node);
-        }
+    log("Node: " + node.label);
+            //generate possible next steps
+            let next = HexMap[node.label].cube.neighbours(); // will be cubes
+            //for each possible next step
+            for (let i=0;i<next.length;i++) {
+                //calculate the cost of the next step 
+                //by adding the step's cost to the node's cost
+                let stepCube = next[i];
+                let stepHexLabel = stepCube.label();
+                if (stepHexLabel === undefined) {continue};
 
-        //move unit back to last hex in results
-        let lastNode = results[results.length - 1];
-        let lastHex = HexMap[lastNode.label];
-        unit.token.set({
-            left: lastHex.centre.x,
-            top: lastHex.centre.y,
+    log("stepHexLabel: " + stepHexLabel);
+                let stepHex = HexMap[stepHexLabel];
+                if (!stepHex) {continue};
+                if (stepHex.offmap === true) {continue};
+
+                let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
+                let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
+                if (jump === true) {elevationChange = 0};
+                if (elevationChange > 2) {continue} //not allowed
+                stepHexCost += elevationChange;
+                let cost = stepHexCost + node.cost;
+    log("Cost: " + cost);
+                //check if this step has already been explored
+                let isExplored = (explored.find(e=> {
+                    return e.label === stepHexLabel
+                }));
+                if (isExplored) {
+                    if (cost < isExplored.cost) {
+                        let dif = isExplored.cost - cost;
+                        isExplored.cost -= dif;
+                        isExplored.estimate -= dif;
+                    }
+                }
+                //avoid repeated nodes during the calculation of neighbours
+                let isFrontier = (frontier.find(e=> {
+                    return e.label === stepHexLabel;
+                }));
+                if (isFrontier) {
+                    if (cost < isFrontier.cost) {
+                        let dif = isFrontier.cost - cost;
+                        isFrontier.cost -= dif;
+                        isFrontier.estimate -= dif;
+                    }
+                }
+
+                //if this step has not been explored
+                if (!isExplored && !isFrontier) {
+                    let est = cost + stepHex.distance(goalHex);
+                    //add the step to the frontier, using the cost and distance
+                    frontier.push({
+                        label: stepHex.label,
+                        cost: cost,
+                        estimate: est,
+                    });
+                }
+            }
+        }
+    log(explored)
+        //If there are no paths left to explore or hit target hex
+        if (explored.length > 0) {
+            array = [];
+            results = [];
+            explored.sort((a,b) => {
+                return b.cost - a.cost;
+            })
+            let last = explored.shift(); //end hex
+            array.push(last);
+            let finished = explored.length > 0 ? false:true;
+
+            while (finished === false) {
+                let lowestCost = last.cost;
+                let current = 0;
+                for (let i=0;i<explored.length;i++) {
+                    let next = explored[i];
+                    if (HexMap[next.label].cube.distance(HexMap[last.label].cube) === 1 && next.cost < lowestCost) {
+                        lowestCost = next.cost;
+                        current = i;
+                    }
+                }
+                last = explored[current];
+                explored.splice(current,1);
+                array.push(last);
+                if (last.label === startHex.label) {
+                    finished = true;
+                }
+            }
+            array.reverse();
+
+            log(array)
+
+            //run through array, stop when reach units movement points (based on move vs sprint etc)
+            //place marker showing cost per hex
+            //might stop before end
+            let usedMP = 0;
+            let prevNodeLabel;
+            for (let i=0;i<array.length;i++) {
+                let node = array[i];
+                if (node.cost > totalMove) {
+                    break;
+                }
+                //place marker showing nodeCost ie. cost for that hex
+                if (node.cost > 0) {
+                    CreateMoveMarker(node.label,node.cost,prevNodeLabel);
+                }
+                prevNodeLabel = node.label;
+                results.push(node);
+            }
+
+            //move unit back to last hex in results
+            let lastNode = results[results.length - 1];
+            let lastHex = HexMap[lastNode.label];
+            unit.token.set({
+                left: lastHex.centre.x,
+                top: lastHex.centre.y,
+            })
+
+        } else {
+            sendChat("","No Path");
+        }
+    }
+
+    const RemoveMoveMarkers = () => {
+        let markers = state.MW.moveMarkers;
+        _.each(markers,marker => {
+            let token = getObj("graphic",marker);
+            if (token) {token.remove()};
+        })
+        state.MW.moveMarkers = [];
+    }
+
+    const CreateMoveMarker = (label,cost,lastLabel) => {
+        let hex = HexMap[label];
+        let lastHex = HexMap[lastLabel];
+        let c1 = hex.centre;
+        let c2 = lastHex.centre;
+        let x = Math.round((c1.x + c2.x)/2);
+        let y = Math.round((c1.y + c2.y)/2);
+
+        let img = getCleanImgSrc(MoveMarkers[cost]);
+        let newToken = createObj("graphic", {
+            left: x,
+            top: y,
+            width: 25,
+            height: 25, 
+            name: "Map Marker",
+            pageid: Campaign().get("playerpageid"),
+            imgsrc: getCleanImgSrc(MoveMarkers[cost]),
+            layer: "map",
         })
 
-    } else {
-        sendChat("","No Path");
+        if (newToken) {
+            toFront(newToken);
+            state.MW.moveMarkers.push(newToken.id);
+        } 
     }
-}
-
-
 
 
 
@@ -2115,18 +2162,38 @@ log(explored)
         let newLabel = new Point(tok.get("left"),tok.get("top")).toCube().label();
         let prevLabel = new Point(prev.left,prev.top).toCube().label();
         if (unit && newLabel !== prevLabel) {
-            log(unit.name + " moving")
-            let index = HexMap[prevLabel].tokenIDs.indexOf(tok.id);
-            if (index > -1) {
-                HexMap[prevLabel].tokenIDs.splice(index,1);
-                HexMap[newLabel].tokenIDs.push(tok.id);
+            if (unit.GetStatus === "Standstill" || unit.token.get(SM.immobile)) {
+                tok.set({
+                    left: prev.left,
+                    top: prev.top,
+                })
+                sendChat("","Unit is not able to move");
+            } else {
+                let newHex = HexMap[newLabel];
+                let prevHex = HexMap[prevLabel];
+                let distance = newHex.distance(prevHex);
+                let elevationChange = Math.abs(newHex.elevation - prevHex.elevation);
+                let jump = (unit.GetStatus() === "Jump" || unit.GetStatus() === "Death from Above") ? true:false;
+                if (jump === true) {elevationChange = 0};
+                if (elevationChange > 2 && distance === 1 && state.MW.turn > 0) {
+                    tok.set({
+                        left: prev.left,
+                        top: prev.top,
+                    })
+                    sendChat("","Elevation Change > 2");
+                } else {
+                    log(unit.name + " moving")
+                    let index = HexMap[prevLabel].tokenIDs.indexOf(tok.id);
+                    if (index > -1) {
+                        HexMap[prevLabel].tokenIDs.splice(index,1);
+                        HexMap[newLabel].tokenIDs.push(tok.id);
+                    }
+                    unit.hexLabel = newLabel;
+                    if (state.MW.turn > 0) {
+                        aStar(unit,HexMap[newLabel]);
+                    }
+                }
             }
-            unit.hexLabel = newLabel;
-            aStar(unit,HexMap[newLabel]);
-//adjust this later to stop unit at max move or dont even run aStar if standstill        
-
-
-
         } 
         if (unit && tok.get("rotation") !== prev.rotation) {
             log(unit.name + " turning")
