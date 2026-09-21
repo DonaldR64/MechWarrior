@@ -178,6 +178,7 @@ const Main = (() => {
         "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, blockLOS: "Semi", terrainModifier: 1},
         "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, blockLOS: "Semi", terrainModifier: 1},
         "Rough": {elevation: 0, terrainHeight: 0, moveCost: 2},
+        "Water Depth 0": {elevation: 0, terrainHeight: 0, moveCost: 2, water: true, blockLOS: "Solid"},
         "Water Depth 1": {elevation: 0, terrainHeight: 1, moveCost: 2, water: true, blockLOS: "Solid"},
         "Water Depth 2": {elevation: 0, terrainHeight: 2, moveCost: 2, water: true, blockLOS: "Solid"},
 
@@ -1844,8 +1845,8 @@ log(currentPhase)
         SetupCard(unit.name,order,unit.faction);
 
         let hex = HexMap[unit.hexLabel];
-        if (hex.water === true && (order === "Jump" || order === "Death from Above")) {
-            outputCard.body.push("Unit cannot Jump from Water");
+        if (hex.water === true && hex.terrainHeight > 0 && (order === "Jump" || order === "Death from Above") ) {
+            outputCard.body.push("Unit cannot Jump from Water Depths 1+");
             PrintCard();
             return;
         }

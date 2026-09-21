@@ -423,10 +423,49 @@
             let damShortMax = values.damShort_max || 0;
             let damMedMax = values.damMed_max || 0;
             let damLongMax = values.damLong_max || 0;
+            let damShort,damMed, damLong;
 
-            let damShort = Math.max(0,damShortMax - wpCrit);
-            let damMed = Math.max(0,damMedMax - wpCrit);
-            let damLong = Math.max(0,damLongMax - wpCrit);
+            if (damShortMax === "0*") {
+                damShort = (wpCrit > 0) ? 0:"0*";
+            } else {
+                damShort = parseInt(damShortMax);
+                if (wpCrit > 0) {
+                    damShort -= wpCrit;
+                    if (damShort === 0) {
+                        damShort = "0*";
+                    } else if (damShort < 0 && wpCrit > 0) {
+                        damShort = 0;
+                    }
+                }
+            }
+
+            if (damMedMax === "0*") {
+                damMed = (wpCrit > 0) ? 0:"0*";
+            } else {
+                damMed = parseInt(damMedMax);
+                if (wpCrit > 0) {
+                    damMed -= wpCrit;
+                    if (damMed === 0) {
+                        damMed = "0*";
+                    } else if (damMed < 0 && wpCrit > 0) {
+                        damMed = 0;
+                    }
+                }
+            }
+
+            if (damLongMax === "0*") {
+                damLong = (wpCrit > 0) ? 0:"0*";
+            } else {
+                damLong = parseInt(damLongMax);
+                if (wpCrit > 0) {
+                    damLong -= wpCrit;
+                    if (damLong === 0) {
+                        damLong = "0*";
+                    } else if (damLong < 0 && wpCrit > 0) {
+                        damLong = 0;
+                    }
+                }
+            }
 
             let armour = parseInt(values.armour);
             let armourMax = parseInt(values.armour_max);
