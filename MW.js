@@ -733,7 +733,7 @@ const Main = (() => {
             this.terrainHeight = 0;
             this.building = false;
             this.water = false;
-
+            this.offmap = false;
 
             this.blockLOS = false;
             this.moveCost = 1;
@@ -813,14 +813,6 @@ const Main = (() => {
     
         }
 
-        Offmap() {
-            let result = false;
-            let pt = HexMap[this.hexLabel].centre;
-            if (pt.x < MapInfo.top.x || pt.y < MapInfo.top.y || pt.x > MapInfo.bottom.x || pt.y > MapInfo.bottom.y) {
-                result = true;
-            }
-            return result;
-        }
 
         Facing(b) {
             let facing = "Front";
@@ -1188,6 +1180,12 @@ log(pageInfo.page)
         MapInfo.top = new Point(x-w,y-h);
         MapInfo.bottom = new Point(x+w,y+h);
         MapInfo.centre = new Point(x,y);
+        _.each(HexMap,hex => {
+            let pt = hex.centre;
+            if (pt.x < MapInfo.top.x || pt.y < MapInfo.top.y || pt.x > MapInfo.bottom.x || pt.y > MapInfo.bottom.y) {
+                hex.offmap = true;
+            }
+        })
     }
      
     const AddTokens = () => {
@@ -1406,7 +1404,7 @@ log(pageInfo.page)
         SetupCard(unit.name,"Info",unit.faction);
 
         outputCard.body.push("Hex Label: " + label);
-        if (unit.Offmap()) {
+        if (hex.offmap === true) {
             outputCard.body.push("Unit is Off Map");
         } else {
             outputCard.body.push("Hex Elevation: " + hex.elevation);
@@ -1981,10 +1979,13 @@ const aStar = (unit,goalHex) => {
         nodes++
         //add this node to explored paths
         explored.push(node);
+log("Explored")
+log(explored)
         //if this node reaches goal, end loop
         if (node.label === goalHex.label) {
             break;
         }
+log("Node: " + node.label);
         //generate possible next steps
         let next = HexMap[node.label].cube.neighbours(); // will be cubes
         //for each possible next step
@@ -1993,22 +1994,38 @@ const aStar = (unit,goalHex) => {
             //by adding the step's cost to the node's cost
             let stepCube = next[i];
             let stepHexLabel = stepCube.label();
+            if (stepHexLabel === undefined) {continue};
+
+log("stepHexLabel: " + stepHexLabel);
             let stepHex = HexMap[stepHexLabel];
             if (!stepHex) {continue};
+            if (stepHex.offmap === true) {continue};
+
             let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
             let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
             if (jump === true) {elevationChange = 0};
             if (elevationChange > 2) {continue} //not allowed
             stepHexCost += elevationChange;
             let cost = stepHexCost + node.cost;
+log("Cost: " + cost);
             //check if this step has already been explored
             let isExplored = (explored.find(e=> {
                 return e.label === stepHexLabel
             }));
             //avoid repeated nodes during the calculation of neighbours
             let isFrontier = (frontier.find(e=> {
-                return e.label === stepHexLabel
+                return e.label === stepHexLabel;
             }));
+            if (isFrontier) {
+                if (cost < isFrontier.cost) {
+                    isFrontier.cost = cost;
+log("Cost Adjusted")
+                }
+            }
+
+
+
+
             //if this step has not been explored
             if (!isExplored && !isFrontier) {
                 let est = cost + stepHex.distance(goalHex);
