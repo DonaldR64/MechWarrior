@@ -795,6 +795,7 @@ const Main = (() => {
                 moveSpecial.push("Jump");
             }
             this.moveSpecial = moveSpecial;
+            this.jumpMove = "";
             if (moveSpecial.includes("Jump")) {
                 this.jumpMove = parseInt(aa.jumpmove) || this.move;
             }
@@ -1876,6 +1877,7 @@ log(currentPhase)
         if (order === "Jump") {
             outputCard.body.push("The Mech has " + jumpMove + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
+            outputCard.body.push("It can jump over " + Math.floor(jumpMove/2) + " levels");
             outputCard.body.push("Movement must be in a Straight Line, but the Mech can turn to face any direction at the end");
             outputCard.body.push("The Mech can Attack");
         }
@@ -1887,6 +1889,7 @@ log(currentPhase)
         if (order === "Death from Above") {
             outputCard.body.push("The Mech has " + jumpMove + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
+            outputCard.body.push("It can jump over " + Math.floor(jumpMove/2) + " levels");
             outputCard.body.push("Movement must be in a Straight Line towards the target, the Mech must end facing the target");
             outputCard.body.push("In the Attack Phase the Mech may do a Death from Above attack");
         }
@@ -1964,8 +1967,7 @@ log(currentPhase)
 
         RemoveMoveMarkers();
 
-        let jump = (unit.GetStatus() === "Jump" || unit.GetStatus() === "Death from Above") ? true:false;
-
+        let jump = false;
         let startHex = HexMap[unit.startHexLabel];
 
         let totalDistance = goalHex.distance(startHex);
@@ -1973,7 +1975,10 @@ log(currentPhase)
         if (unit.GetStatus() === "Sprint") {
             totalMove = Math.round(totalMove * 1.5);
         }
-
+        if ((unit.GetStatus() === "Jump" || unit.GetStatus() === "Death from Above")) {
+            jump = true;
+            totalMove = unit.jumpMove;
+        }
 
         let nodes = 1;
         let explored = [];
@@ -2020,7 +2025,7 @@ log(currentPhase)
                 let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
                 let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
                 if (jump === true && elevationChange <= 2) {elevationChange = 0};
-                if (unit.type === "BattleMech" && elevationChange > 2) {
+                if (unit.type === "BattleMech" && elevationChange > Math.floor(totalMove/2)) {
                     continue;
                 } else if (unit.type !== "BattleMech" && elevationChange > 1) {
                     continue;
