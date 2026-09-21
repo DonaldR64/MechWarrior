@@ -2019,7 +2019,7 @@ log(currentPhase)
 
                 let stepHexCost = (jump === true) ? 1:stepHex.moveCost;
                 let elevationChange = Math.abs(stepHex.elevation - nodeHex.elevation);
-                if (jump === true && elevationChange <= ) {elevationChange = 0};
+                if (jump === true && elevationChange <= 2) {elevationChange = 0};
                 if (unit.type === "BattleMech" && elevationChange > 2) {
                     continue;
                 } else if (unit.type !== "BattleMech" && elevationChange > 1) {
