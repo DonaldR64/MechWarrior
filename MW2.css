@@ -234,6 +234,7 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 .criticals {
     grid-area: criticals;
     flex-direction: center;
+    align-content: stretch;
     background-color:  white;
   }
   
@@ -252,6 +253,7 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 .weapons {
   grid-area: weapons;
   background-color:  white;
+  align-content: stretch;
 }
 
 .weaponinfo{
@@ -354,6 +356,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
 .special {
   grid-area: special;
   background-color:  white;
+  align-content: stretch;
 }
 
 
