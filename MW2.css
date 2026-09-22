@@ -234,7 +234,7 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 .criticals {
     grid-area: criticals;
     display:grid;
-    align-content: content-around;
+    align-content: content-stretch;
     background-color:  white;
   }
   
@@ -252,9 +252,9 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 
 .weapons {
   grid-area: weapons;
-    display:grid;
-    align-content: content-around;
-    background-color:  white;
+  display:grid;
+  align-content: content-stretch;
+  background-color:  white;
 }
 
 .weaponinfo{
