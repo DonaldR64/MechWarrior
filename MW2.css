@@ -253,7 +253,6 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 .weapons {
   grid-area: weapons;
   display:grid;
-  align-content: content-stretch;
   background-color:  white;
 }
 
