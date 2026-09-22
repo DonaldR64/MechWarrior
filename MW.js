@@ -9,6 +9,11 @@ const Main = (() => {
     let MapInfo = {};
     let UnitArray = {};
 
+    let rangeBands = {
+        Long: 21,
+        Medium: 12,
+        Short: 3,
+    }
 
     let moveStatuses = {
         "Not Activated": "transparent",
@@ -814,6 +819,7 @@ const Main = (() => {
             this.skill = parseInt(aa.skill) || 4;
 
             let weaponArray = [];
+            let unitMaxRange = rangeBands["Short"];
             for (let w=1;w<4;w++) {
                 let phrase = "weapon" + w;
                 let wEquip = aa[phrase + "equipped"];
@@ -829,7 +835,14 @@ const Main = (() => {
                 let wLongMax = aa[phrase + "long_max"];
                 let wSpecial = aa[phrase + "special"] || " ";
                 wSpecial = wSpecial.split(",").map(e => e.trim());
-
+                let wMaxRange = rangeBands["Short"];
+                if (wMedMax > 0) {
+                    wMaxRange = rangeBands["Medium"];
+                }
+                if (wLongMax > 0) {
+                     wMaxRange = rangeBands["Long"];
+                }
+                unitMaxRange = Math.max(unitMaxRange,wMaxRange);
                 let info = {
                     name: wName,
                     phrase: phrase,
@@ -841,11 +854,13 @@ const Main = (() => {
                     long: wLong,
                     longMax: wLongMax,
                     special: wSpecial,
+                    maxRange: wMaxRange;
                 }
                 weaponArray.push(info);
             }
 log(weaponArray)
             this.weaponArray = weaponArray;
+            this.maxRange = unitMaxRange;
 
             let index = HexMap[label].tokenIDs.indexOf(id);
             if (index < 0) {
@@ -1624,7 +1639,7 @@ log(pageInfo.page)
                 outputCard.body.push("Both are Underwater");
             }
         }
-        let facings = shooter.Facing(target);
+        let facings = losResult.facings;
         outputCard.body.push("Target is in the " + facings.facing + " Facing");
         outputCard.body.push("Target is being hit on the " + facings.targetArc + " Armour");
         PrintCard();
@@ -1674,6 +1689,7 @@ log("T: " + targetHeight)
                         losBlockedAt: targetHex.label,
                         partial: false,
                         terrainModifier: 0,
+                        facings: shooter.Facing(target),
                     }
                     return result;
                 }
@@ -1780,6 +1796,7 @@ log("Intervening: " + intervening)
             partial: partial,
             terrainModifier: terrainModifier,
             underwater: underwater, //true or false if both underwater
+            facings: shooter.Facing(target),
         }
 
         return result;
