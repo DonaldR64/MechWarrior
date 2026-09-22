@@ -180,8 +180,8 @@ const Main = (() => {
         "Hill 1": {elevation: 1, terrainHeight: 0, moveCost: 1},
         "Hill 2": {elevation: 2, terrainHeight: 0, moveCost: 1},
         "Hill 3": {elevation: 3, terrainHeight: 0, moveCost: 1},
-        "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, blockLOS: "Semi", terrainModifier: 1},
-        "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, blockLOS: "Semi", terrainModifier: 1},
+        "Light Woods": {elevation: 0, terrainHeight: 2, moveCost: 2, blockLOS: "Semi", woods: true},
+        "Heavy Woods": {elevation: 0, terrainHeight: 2, moveCost: 3, blockLOS: "Semi", woods: true},
         "Rough": {elevation: 0, terrainHeight: 0, moveCost: 2},
         "Water Depth 0": {elevation: 0, terrainHeight: 0, moveCost: 2, water: true, blockLOS: "Solid"},
         "Water Depth 1": {elevation: 0, terrainHeight: 1, moveCost: 2, water: true, blockLOS: "Solid"},
@@ -743,7 +743,7 @@ const Main = (() => {
             this.blockLOS = false;
             this.moveCost = 1;
             this.road = false;
-            this.terrainModifier = "";
+            this.woods = false;
 
             HexMap[this.label] = this;
         }
@@ -1325,8 +1325,8 @@ log(pageInfo.page)
                     hex.elevation = terrain.elevation;
                     hex.terrainHeight = Math.max(terrain.terrainHeight,hex.terrainHeight);
                     hex.moveCost = Math.max(terrain.moveCost,hex.moveCost);
-                    if (terrain.terrainModifier) {
-                        hex.terrainModifier = terrain.terrainModifier;
+                    if (terrain.woods) {
+                        hex.woods = true;
                     }
                     //buildings
                     if (terrain.building === true) {
@@ -1632,8 +1632,8 @@ log(pageInfo.page)
             if (losResult.partial === true) {
                 outputCard.body.push("Target has Partial Cover +1");
             }
-            if (losResult.terrainModifier !== 0) {
-                outputCard.body.push("Target has a Terrain Modifier of +" + losResult.terrainModifier);
+            if (losResult.woods === true) {
+                outputCard.body.push("Target has a Terrain Modifier of +1";
             }
             if (losResult.underwater === true) {
                 outputCard.body.push("Both are Underwater");
@@ -1670,7 +1670,7 @@ log("S: " + shooterHeight)
 log("T: " + targetHeight)
 
 
-        let terrainModifier = 0; 
+        let woods = false; 
         let partial = false;
         let losBlockedAt = false, losReason = false;
         let visibleSides = 0;
@@ -1688,7 +1688,7 @@ log("T: " + targetHeight)
                         reason: "Target is Completely Underwater",
                         losBlockedAt: targetHex.label,
                         partial: false,
-                        terrainModifier: 0,
+                        woods: false,
                         facings: shooter.Facing(target),
                     }
                     return result;
@@ -1761,7 +1761,9 @@ log("Intervening: " + intervening)
                                 break interHexLoop;
                             }
                         }
-                        terrainModifier = Math.max(terrainModifier,interHex.terrainModifier);
+                        if (interHex.woods === true) {
+                            woods = true;
+                        }
                     }
                 }
 
@@ -1794,7 +1796,7 @@ log("Intervening: " + intervening)
             reason: losReason,
             losBlockedAt: losBlockedAt,
             partial: partial,
-            terrainModifier: terrainModifier,
+            woods: woods,
             underwater: underwater, //true or false if both underwater
             facings: shooter.Facing(target),
         }
