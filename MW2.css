@@ -283,6 +283,9 @@ input[type="hidden"][value="Off"].weapon1-status ~ .weapon1{
 input[type="hidden"][value="Damaged"].weapon1-status ~ .weapon1 {
     background-color: red;
 }
+input[type="hidden"][value="Damaged"].weapon1-status ~ .weapon1 h4{
+    color: white;
+}
 input[type="hidden"][value="Destroyed"].weapon1-status ~ .weapon1 {
     background-color: black;
 }
@@ -310,6 +313,9 @@ input[type="hidden"][value="Off"].weapon2-status ~ .weapon2{
 input[type="hidden"][value="Damaged"].weapon2-status ~ .weapon2 {
     background-color: red;
 }
+input[type="hidden"][value="Damaged"].weapon2-status ~ .weapon2 h4{
+    color: white;
+}
 input[type="hidden"][value="Destroyed"].weapon2-status ~ .weapon2 {
     background-color: black;
 }
@@ -334,6 +340,12 @@ input[type="hidden"][value="Off"].weapon3-status ~ .weapon3{
 }
 input[type="hidden"][value="Damaged"].weapon3-status ~ .weapon3 {
     background-color: red;
+}
+input[type="hidden"][value="Damaged"].weapon3-status ~ .weapon3 h4{
+    color: white;
+}
+input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 {
+    background-color: black;
 }
 input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     color: white;
