@@ -791,21 +791,58 @@ const Main = (() => {
             this.height = heights[this.type];
     
             this.move = parseInt(aa.move);
+            this.moveMax = parseInt(aa.move_max);
             let moveSpecial = [];
             if (aa.movespecial && aa.movespecial.includes("j")) {
                 moveSpecial.push("Jump");
             }
             this.moveSpecial = moveSpecial;
+            this.jumpMax = aa.jumpmove_max || "";
             this.jumpMove = "";
             if (moveSpecial.includes("Jump")) {
                 this.jumpMove = parseInt(aa.jumpmove) || this.move;
             }
+            this.tmm = parseInt(aa.tmm) || 0;
+            this.tmmMax = parseInt(aa.tmm_max) || 0;
+            this.armour = parseInt(aa.armour) || 0;
+            this.armourMax = parseInt(aa.armour_max) || 0;
+            this.structure = parseInt(aa.stucture) || 0;
+            this.structureMax = parseInt(aa.stucture_max) || 0;
+
 
 
             this.skill = parseInt(aa.skill) || 4;
 
-
-
+            let weaponArray = [];
+            for (let w=1;w<4;w++) {
+                let phrase = "weapon" + w;
+                let wEquip = aa[phrase + "equipped"];
+                if (wEquip === "Off") {continue};
+                let wName = aa[phrase + "name"];
+                if (!wName) {continue};
+                let wType = aa[phrase + "type"];
+                let wShort = aa[phrase + "short"];
+                let wMed = aa[phrase + "medium"];
+                let wLong = aa[phrase + "long"];
+                let wShortMax = aa[phrase + "short_max"];
+                let wMedMex = aa[phrase + "medium_max"];
+                let wLongMax = aa[phrase + "long_max"];
+                let wSpecial = aa[phrase + "special"];
+                let info = {
+                    name: wName,
+                    phrase: phrase,
+                    type: wType,
+                    short: wShort,
+                    shortMax: shortMax,
+                    medium: wMed,
+                    mediumMax: wMedMax,
+                    long: wLong,
+                    longMax: wLongMax,
+                    special: wSpecial,
+                }
+                weaponArray.push(info);
+            }
+log(weaponArray)
 
 
             let index = HexMap[label].tokenIDs.indexOf(id);
@@ -1954,6 +1991,32 @@ log(currentPhase)
             unit.name = name;
             unit.token.set("name",name);
             unit.startHexLabel = unit.hexLabel;
+            _.each(unit.weaponArray,weapon => {
+                weapon.short = weapon.shortMax;
+                weapon.medium = weapon.mediumMax;
+                weapon.long = weapon.longMax;
+                AttributeSet(unit.charID,weapon.phrase + "short",weapon.shortMax);
+                AttributeSet(unit.charID,weapon.phrase + "medium",weapon.mediumMax);
+                AttributeSet(unit.charID,weapon.phrase + "long",weapon.longMax);
+            })
+            AttributeSet(unit.charID,"enginecrit",0);
+            AttributeSet(unit.charID,"mpcritlevel",0);
+            AttributeSet(unit.charID,"wpcritlevel",0);
+            AttributeSet(unit.charID,"heat",0);
+            unit.heat = 0;
+            AttributeSet(unit.charID,"move",unit.moveMax);
+            unit.move = unit.moveMax;
+            AttributeSet(unit.charID,"jumpmove",unit.jumpMax);
+            unit.jumpMove = unit.jumpMax;
+            AttributeSet(unit.charID,"tmm",unit.tmmMax);
+            unit.tmm = unit.tmmMax;
+            AttributeSet(unit.charID,"armour",unit.armourMax);
+            unit.armour = unit.armourMax;
+            AttributeSet(unit.charID,"structure",unit.structureMax);
+            unit.structure = unit.structureMax;
+
+
+
         })
 
         sendChat("","Game Set");
