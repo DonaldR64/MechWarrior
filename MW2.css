@@ -14,7 +14,7 @@
 
 .mysheet {
     width: 830px;
-    height: 530px;
+    height: 580px;
     background-image: url("https://files.d20.io/images/501266163/oy5qGhS1vXgcKes92nLztw/thumb.jpg?1789612219");
     background-size: cover;
     background-position: center;
@@ -29,7 +29,7 @@
 main {
     display: grid;
     width: 800px;
-    height: 500px;
+    height: 550px;
     grid-gap: 4px;
     grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(7,1fr);
