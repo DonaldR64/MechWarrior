@@ -252,8 +252,8 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 .weapons {
   grid-area: weapons;
   background-color:  white;
-  align-content: space-evenly;
-
+  align-content: content-stretch;
+  display:grid;
 }
 
 .weapontitle {
