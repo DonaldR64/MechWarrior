@@ -406,7 +406,7 @@
     on("sheet:opened", function() {
         getAttrs(["enginecrit",'fccritlevel','mpcritlevel','wpcritlevel','heat','move_max',"tmm_max","armour","armour_max","structure","structure_max","character_name","jumpmove_max","movespecial"], function(values) {
             
-            let name = values.character_name.split("//").trim();
+            let name = values.character_name.split("//")[0].trim();
 
             let engineCrit = parseInt(values.enginecrit) || 0;
             let fcCrit = parseInt(values.fccritlevel) || 0;
