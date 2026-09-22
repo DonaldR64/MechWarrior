@@ -32,12 +32,13 @@ main {
     height: 500px;
     grid-gap: 4px;
     grid-template-columns: repeat(10,1fr);
-    grid-template-rows: repeat(6,1fr);
+    grid-template-rows: repeat(7,1fr);
     grid-template-areas:"info     info  info info    info    info       pic pic pic pic"
                         "skill    move  tmm  heat    armour  structure pic pic pic pic"
                         "weapons    weapons weapons weapons  weapons  weapons pic pic pic pic"
                         "weapons    weapons weapons weapons  weapons  weapons pic pic pic pic"
                         "weapons    weapons weapons weapons weapons weapons criticals criticals criticals criticals"
+                        "special    special special special special special criticals criticals criticals criticals"
                         "special    special special special special special criticals criticals criticals criticals";
     }
 
