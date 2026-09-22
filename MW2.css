@@ -369,7 +369,8 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
 .special {
   grid-area: special;
   background-color:  white;
-  align-content: content-stretch;
+  align-content: space-evenly;
+    align-items: center;
 }
 
 
@@ -381,7 +382,6 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     grid-auto-rows: repeat(3, 1fr);
     background-color: white;
     align-items: center;
-    align-content: content-stretch;
     font-weight: bold;
   }
 
