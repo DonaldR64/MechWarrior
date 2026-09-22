@@ -243,7 +243,6 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
     grid-area: pic;
     display: flex;
     justify-content: center;
-    align-items: center;
     background-color: white;
   }
   
@@ -252,9 +251,6 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 
 .weapons {
   grid-area: weapons;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color:  white;
 }
 
