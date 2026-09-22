@@ -854,7 +854,7 @@ const Main = (() => {
                     long: wLong,
                     longMax: wLongMax,
                     special: wSpecial,
-                    maxRange: wMaxRange;
+                    maxRange: wMaxRange,
                 }
                 weaponArray.push(info);
             }
