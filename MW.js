@@ -109,7 +109,7 @@ const Main = (() => {
             "borderColour": "#341F50",
             "borderStyle": "5px double",
             "names": ["Bailey","Binetti","Calbot","Clees","Eodrap","Folker","Hazen","Helmer","Icaza","Isha","Littleton","Loudon","Malthus","Mattlov","Pryde","Roshak","Schtern","Sustan","Thastus","Viola"],
-            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","",""],
+            "ranks": ["Col. ","Cpt. ","Com. ","PC. ","",""],
 
         },
         "Clan Wolf": {
@@ -121,7 +121,7 @@ const Main = (() => {
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
             "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"],
-            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","",""],
+            "ranks": ["Col. ","Cpt. ","Com. ","PC. ","",""],
         },
         "Clan Smoke Jaguar": {
             "image": "https://files.d20.io/images/501599772/_FilZT_hOdIB-rL4WUpJLA/thumb.avif?1789868051",
@@ -132,7 +132,7 @@ const Main = (() => {
             "borderColour": "#545454",
             "borderStyle": "5px double",
             "names": ["Bowen","Canto","Corbett","Dimitrov","Furey","Hoff","Howell","Ismirii","Kotare","Levi","Montezuma","Moon","Osis","Ott","Perez","Rippon","Showers","Stiles","Weaver","Wimmer","Yoshida"],
-            "ranks": ["Star Col. ","Star Cpt. ","Star Com. ","Point Com. ","",""],
+            "ranks": ["Col. ","Cpt. ","Com. ","PC. ","",""],
         },
         "Northwind Highlanders": {
             "image": "https://files.d20.io/images/501599833/Hx98oLbHV5JRWNLqWet13g/thumb.png?1789868093",
@@ -1839,9 +1839,11 @@ log(currentPhase)
         let rolls = [[],[]];
         let totals = [0,0];
         for (let p=0;p<2;p++) {
-            let roll = randomInteger(6);
-            totals[p] += roll;
-            rolls[p].push(DisplayDice(roll,state.MW.factions[p],24));
+            for (let d=0;d<2;d++) {
+                let roll = randomInteger(6);
+                totals[p] += roll;
+                rolls[p].push(DisplayDice(roll,state.MW.factions[p],24));
+            }
         }
         let winner = 2;
         if (totals[0] === totals[1]) {
@@ -1869,7 +1871,6 @@ log(currentPhase)
         _.each(UnitArray,unit => {
             unitNumbers[unit.player]++;
             unit.SetStatus("Not Activated");
-            unit.startHexLabel = unit.hexLabel;
         })
 
 
@@ -1905,6 +1906,7 @@ log(currentPhase)
         let Tag = msg.content.split(";");
         let order = Tag[1]; //Standstill, Move, Sprint, Jump
         SetupCard(unit.name,order,unit.faction);
+        unit.startHexLabel = unit.hexLabel;
 
         let hex = HexMap[unit.hexLabel];
         if (hex.water === true && hex.terrainHeight > 0 && (order === "Jump" || order === "Death from Above") ) {
@@ -1913,9 +1915,8 @@ log(currentPhase)
             return;
         }
 
-        let move = DeepCopy(unit.move);
-        let jumpMove = DeepCopy(unit.jumpmove);
-
+        let move = unit.move;
+        let jumpMove = unit.jumpMove || 0;
         if (move === 0) {
             order = "Standstill";
             outputCard.subtitle = "Standstill";
@@ -1940,7 +1941,7 @@ log(currentPhase)
         if (order === "Jump") {
             outputCard.body.push("The Mech has " + jumpMove + " MP");;
             outputCard.body.push("It will ignore Terrain Costs");
-            outputCard.body.push("It can jump over " + Math.floor(jumpMove/2) + " levels");
+            outputCard.body.push("It can jump " + Math.floor(jumpMove/2) + " levels high");
             outputCard.body.push("Movement must be in a Straight Line, but the Mech can turn to face any direction at the end");
             outputCard.body.push("The Mech can Attack");
         }
@@ -2068,7 +2069,7 @@ log(currentPhase)
         let startHex = HexMap[unit.startHexLabel];
 
         let totalDistance = goalHex.distance(startHex);
-        let totalMove = DeepCopy(unit.move);
+        let totalMove = unit.move;
         if (unit.GetStatus() === "Sprint") {
             totalMove = Math.round(totalMove * 1.5);
         }
