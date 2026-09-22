@@ -806,8 +806,8 @@ const Main = (() => {
             this.tmmMax = parseInt(aa.tmm_max) || 0;
             this.armour = parseInt(aa.armour) || 0;
             this.armourMax = parseInt(aa.armour_max) || 0;
-            this.structure = parseInt(aa.stucture) || 0;
-            this.structureMax = parseInt(aa.stucture_max) || 0;
+            this.structure = parseInt(aa.structure) || 0;
+            this.structureMax = parseInt(aa.structure_max) || 0;
 
 
 
@@ -825,7 +825,7 @@ const Main = (() => {
                 let wMed = aa[phrase + "medium"];
                 let wLong = aa[phrase + "long"];
                 let wShortMax = aa[phrase + "short_max"];
-                let wMedMex = aa[phrase + "medium_max"];
+                let wMedMax = aa[phrase + "medium_max"];
                 let wLongMax = aa[phrase + "long_max"];
                 let wSpecial = aa[phrase + "special"];
                 let info = {
@@ -833,7 +833,7 @@ const Main = (() => {
                     phrase: phrase,
                     type: wType,
                     short: wShort,
-                    shortMax: shortMax,
+                    shortMax: wShortMax,
                     medium: wMed,
                     mediumMax: wMedMax,
                     long: wLong,
@@ -843,7 +843,7 @@ const Main = (() => {
                 weaponArray.push(info);
             }
 log(weaponArray)
-
+            this.weaponArray = weaponArray;
 
             let index = HexMap[label].tokenIDs.indexOf(id);
             if (index < 0) {
@@ -1991,14 +1991,17 @@ log(currentPhase)
             unit.name = name;
             unit.token.set("name",name);
             unit.startHexLabel = unit.hexLabel;
-            _.each(unit.weaponArray,weapon => {
+            for (let i=0;i<unit.weaponArray.length;i++) {
+                let weapon = unit.weaponArray[i];
                 weapon.short = weapon.shortMax;
                 weapon.medium = weapon.mediumMax;
                 weapon.long = weapon.longMax;
                 AttributeSet(unit.charID,weapon.phrase + "short",weapon.shortMax);
                 AttributeSet(unit.charID,weapon.phrase + "medium",weapon.mediumMax);
                 AttributeSet(unit.charID,weapon.phrase + "long",weapon.longMax);
-            })
+            }
+            log("Set")
+            log(unit.weaponArray)
             AttributeSet(unit.charID,"enginecrit",0);
             AttributeSet(unit.charID,"mpcritlevel",0);
             AttributeSet(unit.charID,"wpcritlevel",0);
@@ -2014,9 +2017,14 @@ log(currentPhase)
             unit.armour = unit.armourMax;
             AttributeSet(unit.charID,"structure",unit.structureMax);
             unit.structure = unit.structureMax;
-
-
-
+            let armourID = AttributeID(unit.charID,"armour");
+            let structureID = AttributeID(unit.charID,"structure");
+            let heatID = AttributeID(unit.charID,"heat");
+            unit.token.set({
+                "bar1_value": unit.structureMax,
+                "bar2_value": unit.armourMax,
+                "bar3_value": unit.heat,
+            })
         })
 
         sendChat("","Game Set");
