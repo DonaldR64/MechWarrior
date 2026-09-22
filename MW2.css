@@ -383,6 +383,10 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     align-items: center;
   }
 
+  .specialinfo h3{
+    color:darkred
+
+  }
 
 .crittitle h3{
   font-weight: bold;
