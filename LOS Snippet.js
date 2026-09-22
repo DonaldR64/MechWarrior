@@ -31,7 +31,7 @@ const ShowTargets = (msg) => {
         c = false;
     } else {
         //for each target, draw line and maybe indicate % chance of hit
-
+        //can create routine to factor to hit, call on it here and in firing routine
 
 
 
