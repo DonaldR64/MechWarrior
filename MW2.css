@@ -252,7 +252,6 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
 .weapons {
   grid-area: weapons;
   background-color:  white;
-  align-content: content-stretch;
   display:grid;
 }
 
@@ -261,7 +260,7 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
   display: grid;
   grid-gap: 1px;
   grid-template-columns: 1fr;
-  grid-template-rows: 1;
+  grid-template-rows: 1fr;
   text-align: left;
   align-items: center;
   padding: 3px;
@@ -274,7 +273,7 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
   display: grid;
   grid-gap: 2px;
   grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
-  grid-template-rows: 1;
+  grid-template-rows: 1fr;
   background-color: white;
   text-align: center;
   align-items: center;
@@ -304,7 +303,7 @@ input[type="hidden"][value="Destroyed"].weapon1-status ~ .weapon1 h4{
     display: grid;
     grid-gap: 1px;
     grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
-    grid-template-rows: 1;
+    grid-template-rows: 1fr;
     text-align: center;
     align-items: center;
     padding: 3px;
@@ -332,7 +331,7 @@ input[type="hidden"][value="Destroyed"].weapon2-status ~ .weapon2 h4{
     display: grid;
     grid-gap: 1px;
     grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
-    grid-template-rows: 1;
+    grid-template-rows: 1fr;
     background-color: white;
     text-align: center;
     align-items: center;
@@ -360,7 +359,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     display: grid;
     grid-gap: 1px;
     grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
-    grid-template-rows: 1;
+    grid-template-rows: 1fr;
     text-align: center;
     align-items: center;
     padding: 3px;
