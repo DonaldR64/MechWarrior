@@ -369,13 +369,14 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
 .special {
   grid-area: special;
   background-color:  white;
-  
+
 }
 
 
 
 .specialinfo {
     grid-area: weaponinfo;
+    margin-top: 10px;
     display: grid;
     grid-gap: 5px;
     grid-template-columns: repeat(2,1fr);
