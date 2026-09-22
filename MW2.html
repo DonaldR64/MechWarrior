@@ -1,0 +1,583 @@
+<input type="hidden" class="sheet-tabstoggle" name="attr_sheetTab"  value="display"  />
+<div>
+    <button type="action" name="act_input">Input</button>
+    <button type="action" name="act_display">Display</button>
+    <button type="action" name="act_specials">Specials</button>
+</div>
+
+<div class="sheet-input">
+    <div class="2colrow">
+        <div class="col">
+            <h3>Team Information</h3>
+            <label>Mech Name:</label><input type="text" name="attr_character_name">
+            <label>Mech Variant:</label><input type="text" name="attr_variant">
+            <br>
+            <label for="attr_faction">Faction:</label>
+            <select name="attr_faction">
+                <option value="" selected disabled hidden>Choose here</option>
+                <option value="Clan Jade Falcon">Clan Jade Falcon</option>
+                <option value="Clan Wolf">Clan Wolf</option>
+                <option value="Clan Smoke Jaguar">Clan Smoke Jaguar</option>
+                <option value="ComStar">ComStar</option>
+                <option value="Northwind Highlanders">Northwind Highlanders</option>
+            </select>
+            <label for="attr_type">Type:</label>
+            <select name="attr_type">
+                <option value="" selected disabled hidden>Choose here</option>
+                <option value="BattleMech">BattleMech</option>
+                <option value="System Token">System Token</option>
+            </select>
+            <label for="attr_size">Size:</label>
+            <select name="attr_size">
+                <option value="Assault">Assault</option>
+                <option value="Heavy">Heavy</option>
+                <option value="Medium">Medium</option>
+                <option value="Light">Light</option>
+            </select>
+            <br>  
+            <label for="attr_role">Role:</label>
+            <select name="attr_role">
+                <option value="Brawler">Brawler</option>
+                <option value="Juggernaught">Juggernaught</option>
+                <option value="Sniper">Sniper</option>
+                <option value="Missile Boat">Missile Boat</option>
+                <option value="Striker">Striker</option>
+                <option value="Skirmisher">Skirmisher</option>
+                <option value="Scout">Scout</option>
+            </select>            
+            <label for="attr_skill">Skill:</label>
+            <select name="attr_skill">
+                <option value=4>Regular/Inner Sphere</option>
+                <option value=3>Veteran/Clan</option>
+                <option value=5>Green</option>
+                <option value=2>Elite</option>
+                <option value=1>Heroic</option>
+                <option value=0>Legendary</option>
+            </select>
+            <label>Move Max:</label><input type="number" name="attr_move_max">
+            <label for="attr_movespecial">Special Movement:</label>
+            <select name="attr_movespecial">
+                <option value="">Nil</option>
+                <option value="j">Jump</option>
+            </select>            
+            <label>Jump Move Max (only if different):</label><input type="number" name="attr_jumpmove_max">
+
+            <label>TMM Max:</label><input type="number" name="attr_tmm_max">
+        </div>
+        <div class="col">
+            <h3>Weapons</h3>
+            <table>
+            <thead>
+                <tr>
+                    <th>Equipped</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>S</th>
+                    <th>M</th>
+                    <th>L</th>
+                    <th>Special</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><select name="attr_weapon1equipped">
+                        <option selected = "selected" value = "Off">Off</option>
+                        <option value = "Normal">Normal</option>
+                        <option value = "Damaged">Damaged</option>
+                        <option value = "Off">Off</option>
+                    </select></td>
+                    <td><input type="text" name="attr_weapon1name"></td>
+                    <td><select name="attr_weapon1type">
+                        <option value="Small Laser">Small Laser</option>
+                        <option value="Medium Laser">Medium Laser</option>
+                        <option value="Large Laser">Large Laser</option>
+                        <option value="Pulse Laser">Pulse Laser</option>
+                        <option value="Gauss">Gauss</option>
+                        <option value="Autocannon">Autocannon</option>
+                        <option value="MG">MG</option>
+                        <option value="Minigun">Minigun</option>
+                        <option value="PPC">PPC</option>
+                        <option value="SRM">SRM</option>
+                        <option value="LRM">LRM</option>
+                        <option value="Flamer">Flamer</option>
+                    </select></td>                 
+                    <td><input type="text" name="attr_weapon1short_max"></td>
+                    <td><input type="text" name="attr_weapon1med_max"></td>
+                    <td><input type="text" name="attr_weapon1long_max"></td>
+                    <td><input type="text" name="attr_weapon1special"></td>
+                </tr>
+                <tr>
+                    <td><select name="attr_weapon2equipped">
+                        <option selected = "selected" value = "Off">Off</option>
+                        <option value = "Normal">Normal</option>
+                        <option value = "Damaged">Damaged</option>
+                        <option value = "Off">Off</option>
+                    </select></td>
+                    <td><input type="text" name="attr_weapon2name"></td>
+                    <td><select name="attr_weapon2type">
+                        <option value="Small Laser">Small Laser</option>
+                        <option value="Medium Laser">Medium Laser</option>
+                        <option value="Large Laser">Large Laser</option>
+                        <option value="Pulse Laser">Pulse Laser</option>
+                        <option value="Gauss">Gauss</option>
+                        <option value="Autocannon">Autocannon</option>
+                        <option value="MG">MG</option>
+                        <option value="Minigun">Minigun</option>
+                        <option value="PPC">PPC</option>
+                        <option value="SRM">SRM</option>
+                        <option value="LRM">LRM</option>
+                        <option value="Flamer">Flamer</option>
+                    </select></td>                 
+                    <td><input type="text" name="attr_weapon2short_max"></td>
+                    <td><input type="text" name="attr_weapon2med_max"></td>
+                    <td><input type="text" name="attr_weapon2long_max"></td>
+                    <td><input type="text" name="attr_weapon2special"></td>
+                </tr>
+                <tr>
+                    <td><select name="attr_weapon3equipped">
+                        <option selected = "selected" value = "Off">Off</option>
+                        <option value = "Normal">Normal</option>
+                        <option value = "Damaged">Damaged</option>
+                        <option value = "Off">Off</option>
+                    </select></td>
+                    <td><input type="text" name="attr_weapon3name"></td>
+                    <td><select name="attr_weapon3type">
+                        <option value="Small Laser">Small Laser</option>
+                        <option value="Medium Laser">Medium Laser</option>
+                        <option value="Large Laser">Large Laser</option>
+                        <option value="Pulse Laser">Pulse Laser</option>
+                        <option value="Gauss">Gauss</option>
+                        <option value="Autocannon">Autocannon</option>
+                        <option value="MG">MG</option>
+                        <option value="Minigun">Minigun</option>
+                        <option value="PPC">PPC</option>
+                        <option value="SRM">SRM</option>
+                        <option value="LRM">LRM</option>
+                        <option value="Flamer">Flamer</option>
+                    </select></td>                 
+                    <td><input type="text" name="attr_weapon3short_max"></td>
+                    <td><input type="text" name="attr_weapon3med_max"></td>
+                    <td><input type="text" name="attr_weapon3long_max"></td>
+                    <td><input type="text" name="attr_weapon3special"></td>
+                </tr>
+            </tbody>
+            </table> 
+        </div>
+        <div class="col">
+            <h3>Defense</h3>
+            <label>Armour Max:</label><input type="number" name="attr_armour_max">
+            <label>Structure Max:</label><input type="number" name="attr_structure_max">
+        </div>
+        <div class="col">
+            <h3>Sample Settings</h3>
+            <label>Current Armour:</label><input type="number" name="attr_armour">
+            <label>Current Structure:</label><input type="number" name="attr_structure">
+
+            <label for="attr_heat">Current Heat:</label>
+            <select name="attr_heat">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="S">S</option>
+            </select>
+            <h3>Criticals</h3> 
+             <label for="attr_enginecrit">Engine Crit Level:</label>
+            <select name="attr_enginecrit">
+                <option value=0>0</option>
+                <option value=1>1</option>
+            </select>
+             <label for="attr_fccritlevel">FC Crit Level:</label>
+            <select name="attr_fccritlevel">
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+            </select>
+             <label for="attr_mpcritlevel">MP Crit Level:</label>
+            <select name="attr_mpcritlevel">
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+            </select>
+             <label for="attr_wpcritlevel">WP Crit Level:</label>
+            <select name="attr_wpcritlevel">
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+            </select>
+        </div>
+
+        <div class="col">
+            <h3>Special Equipment and Abilities</h3>
+            <input type="text" name="attr_special1">
+            <input type="text" name="attr_special2">
+            <input type="text" name="attr_special3">
+            <input type="text" name="attr_special4">
+            <input type="text" name="attr_special5">
+            <input type="text" name="attr_special6">
+            <input type="text" name="attr_special7">
+            <input type="text" name="attr_special8">
+        </div>
+
+
+
+
+    </div>    
+
+</div>
+
+
+<div class="sheet-display">
+    <div class="mysheet">
+        <div class="attributes">
+            <main>
+                <section class="info f-center">
+                    <h1><span name="attr_name"></span></h1>
+                    <h3><span name="attr_variant"></span> Variant <span name="attr_size"></span> <span name="attr_type"></span></h3>
+                    <h3><span name="attr_faction"></span> <span name="attr_role"></span></h3>
+                </section>
+
+                <section class="pic">
+                    <div>
+                        <img alt="Character Avatar" name="attr_character_avatar" style="width:auto;height:320px; bottom: 0;"/>
+                    </div>
+                </section>
+
+                <input type="hidden" name="attr_movestatus" class="move-status" value="White">
+                <section class="move f-center">
+                    <h3>Move</h3>
+                    <div>
+                        <h3><span name="attr_movedisplay"></span></h3>
+                    </div>
+                </section>
+
+                <section class="skill f-center">
+                    <h3>Skill</h3>
+                    <div>
+                        <h3><span name="attr_skill"></span></h3>
+                    </div>
+                </section>
+
+                <input type="hidden" name="attr_tmmstatus" class="tmm-status" value="White">
+                <section class="tmm f-center">
+                    <h3>TMM</h3>
+                    <div>
+                        <h3><span name="attr_tmm"></span></h3>
+                    </div>
+                </section>
+
+                <input type="hidden" name="attr_heatstatus" class="heat-status" value="White">
+                <section class="heat f-center">
+                    <h3>Heat</h3>
+                    <div>
+                        <h3><span name="attr_heat"></span></h3>
+                    </div>
+                </section>
+
+                <input type="hidden" name="attr_armourstatus" class="armour-status" value="White">
+                <section class="armour">
+                    <h3>Armour</h3>
+                    <div class="redtext">
+                        <h3><span name="attr_armour"></span></h3>
+                    </div>
+                </section>
+
+                <input type="hidden" name="attr_structurestatus" class="structure-status" value="White">
+                <section class="structure">
+                    <h3>Structure</h3>
+                    <div class="redtext">
+                        <h3><span name="attr_structure"></span></h3>
+                    </div>
+                </section>
+
+
+
+                <section class="special">
+                    <div class="specialtitle">
+                        <h3>Special Abilities/Equipment</h3>
+                    </div>
+                    <div class="specialinfo1">
+                        <h4><span name="attr_special1"></span></h4>
+                    </div>
+                    <div class="specialinfo2">
+                        <h4><span name="attr_special2"></span></h4>
+                    </div>
+                    <div class="specialinfo3">
+                        <h4><span name="attr_special3"></span></h4>
+                    </div>
+                    <div class="specialinfo4">
+                        <h4><span name="attr_special4"></span></h4>
+                    </div>
+                    <div class="specialinfo5">
+                        <h4><span name="attr_special5"></span></h4>
+                    </div>
+                    <div class="specialinfo6">
+                        <h4><span name="attr_special6"></span></h4>
+                    </div>
+                    <div class="specialinfo7">
+                        <h4><span name="attr_special7"></span></h4>
+                    </div>
+                    <div class="specialinfo8">
+                        <h4><span name="attr_special8"></span></h4>
+                    </div>
+                </section>
+
+                <section class="weapons">    
+                    <h3>Weapons</h3>
+                    <div class="weaponinfo">
+                        <div><span>Weapon</span></div>
+                        <div><span>Short</span></div>
+                        <div><span>Medium</span></div>
+                        <div><span>Long</span></div>
+                        <div><span>Special</span></div>
+                    </div>      
+
+                    <input type="hidden" name="attr_weapon1equipped" class="weapon1-status" value="Off">
+                    <div class="weapon1">
+                        <h4><span name="attr_weapon1name"></span>
+                        <h4><span name="attr_weapon1short"></span></h4>
+                        <h4><span name="attr_weapon1medium"></span></h4>
+                        <h4><span name="attr_weapon1long"></span></h4>
+                        <h4><span name="attr_weapon1special"></span></h4>
+                    </div>
+
+                    <input type="hidden" name="attr_weapon2equipped" class="weapon2-status" value="Off">
+                    <div class="weapon1">
+                        <h4><span name="attr_weapon2name"></span>
+                        <h4><span name="attr_weapon2short"></span></h4>
+                        <h4><span name="attr_weapon2medium"></span></h4>
+                        <h4><span name="attr_weapon2long"></span></h4>
+                        <h4><span name="attr_weapon2special"></span></h4>
+                    </div>
+
+                    <input type="hidden" name="attr_weapon3equipped" class="weapon3-status" value="Off">
+                    <div class="weapon1">
+                        <h4><span name="attr_weapon3name"></span>
+                        <h4><span name="attr_weapon3short"></span></h4>
+                        <h4><span name="attr_weapon3medium"></span></h4>
+                        <h4><span name="attr_weapon3long"></span></h4>
+                        <h4><span name="attr_weapon3special"></span></h4>
+                    </div>                    
+                </section>
+
+                <section class="criticals">
+                    <div class="crittitle">
+                        <h3>Critical Hits</h3>
+                    </div>
+                    <div class = "enginecrit">
+                        <h4>Engine: </h4>
+                        <img alt="engineCrit" name="attr_engine1"/>
+                    </div>
+                    <div class="fccrit">
+                        <h4>Fire Control: </h4>
+                        <img alt="FC" name="attr_fc4"/>
+                        <img alt="FC" name="attr_fc3"/>
+                        <img alt="FC" name="attr_fc2"/>
+                        <img alt="FC" name="attr_fc1"/>
+                    </div>
+                    <div class="mpcrit">
+                        <h4>Movement: </h4>
+                        <img alt="MP" name="attr_mp4"/>
+                        <img alt="MP" name="attr_mp3"/>
+                        <img alt="MP" name="attr_mp2"/>
+                        <img alt="MP" name="attr_mp1"/>
+                    </div>
+                    <div class="wpcrit">
+                        <h4>Weapon:</h4>
+                        <img alt="WP" name="attr_wp4"/>
+                        <img alt="WP" name="attr_wp3"/>
+                        <img alt="WP" name="attr_wp2"/>
+                        <img alt="WP" name="attr_wp1"/>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>    
+</div>
+
+
+
+
+
+<script type="text/worker">
+    const buttonlist = ["input","display","specials"];
+    buttonlist.forEach(button => {
+        on(`clicked:${button}`, function() {
+            setAttrs({
+                sheetTab: button
+            });
+        });
+    });
+
+    on("sheet:opened", function() {
+        setAttrs({sheetTab:"display"});
+    });
+
+    on("sheet:opened", function() {
+        getAttrs(["enginecrit",'fccritlevel','mpcritlevel','wpcritlevel','heat','move_max',"tmm_max","armour","armour_max","structure","structure_max","character_name","jumpmove_max","movespecial"], function(values) {
+            
+            let name = values.character_name;
+            name = name.split("//")[0].trim();
+            let engineCrit = parseInt(values.enginecrit) || 0;
+            let fcCrit = parseInt(values.fccritlevel) || 0;
+            let mpCrit = parseInt(values.mpcritlevel) || 0;
+            let wpCrit = parseInt(values.wpcritlevel) || 0;
+
+            let greendot = "https://files.d20.io/images/501354665/YxIXZgyqIHPwfjQ_XVZu3Q/thumb.png?1789692122";
+            let reddot = "https://files.d20.io/images/501354284/8g7GBj3vrwxESRkfcoRa5g/thumb.png?1789691985"
+
+
+
+            let engine1 = engineCrit === 1 ? reddot:greendot;
+            let fc1 = fcCrit >= 1 ? reddot:greendot;
+            let fc2 = fcCrit >= 2 ? reddot:greendot;
+            let fc3 = fcCrit >= 3 ? reddot:greendot;
+            let fc4 = fcCrit === 4 ? reddot:greendot;
+            let mp1 = mpCrit >= 1 ? reddot:greendot;
+            let mp2 = mpCrit >= 2 ? reddot:greendot;
+            let mp3 = mpCrit >= 3 ? reddot:greendot;
+            let mp4 = mpCrit === 4 ? reddot:greendot;
+            let wp1 = wpCrit >= 1 ? reddot:greendot;
+            let wp2 = wpCrit >= 2 ? reddot:greendot;
+            let wp3 = wpCrit >= 3 ? reddot:greendot;
+            let wp4 = wpCrit === 4 ? reddot:greendot;
+
+            let heatstatus = "White";
+            if (values.heat === "1") {heatstatus = "Yellow"};
+            if (values.heat === "2") {heatstatus = "Orange"};
+            if (values.heat === "3") {heatstatus = "Red"};
+            if (values.heat === "S") {heatstatus = "Black"};
+
+            let moveMax = values.move_max;
+            let ratios = [1,.5,.25,.125,.0625];
+            let move = Math.floor(moveMax * ratios[mpCrit]);
+            move = Math.min(move,Math.max(moveMax - mpCrit,0)); //min 1 hex reduction per crit level
+            let movestatus = "White";
+            if (move < moveMax) {
+                movestatus = "Yellow";
+            }
+            if (move === 0) {
+                movestatus = "Black";
+            }
+
+            let jumpMoveMax = values.jumpmove_max || "";
+            let jumpMove = "";
+            if (jumpMoveMax) {
+                jumpMove = Math.floor(jumpMoveMax * ratios[mpCrit]);
+                jumpMove = Math.min(jumpMove,Math.max(jumpMoveMax - mpCrit,0));
+            }
+
+
+            let tmmMax = values.tmm_max;
+            let tmm = Math.floor(tmmMax * ratios[mpCrit]);
+            tmm = Math.min(tmm,Math.max(tmmMax - mpCrit,0)); //min 1 per level
+            let tmmstatus = "White";
+            if (tmm < tmmMax) {
+                tmmstatus = "Yellow";
+            }
+            if (tmm === 0 && tmmMax > 0) {
+                tmmstatus = "Red";
+            }
+
+            let armour = parseInt(values.armour);
+            let armourMax = parseInt(values.armour_max);
+            let structure = parseInt(values.structure);
+            let structureMax = parseInt(values.structure_max);
+
+            let armourStatus = "White";
+            if (armour < armourMax) {
+                armourStatus = "Yellow";
+            } 
+            if (armour === 0 && armourMax > 0) {
+                armourStatus = "Red";
+            }
+            let structureStatus = "White";
+            if (structure < structureMax && structure > (structureMax/2)) {
+                structureStatus = "Yellow";
+            } 
+            if (structure < structureMax/2) {
+                structureStatus = "Red";
+            } 
+            let shortStatus = "White";
+            if (damShort > 0 && damShort < damShortMax) {
+                shortStatus = "Yellow";
+            }
+            if (damShort === 0) {
+                shortStatus = "Red";
+            }
+            let medStatus = "White";
+            if (damMed > 0 && damMed < damMedMax) {
+                medStatus = "Yellow";
+            }
+            if (damMed === 0) {
+                medStatus = "Red";
+            }
+            let longStatus = "White";
+            if (damLong > 0 && damLong < damLongMax) {
+                longStatus = "Yellow";
+            }
+            if (damLong === 0) {
+                longStatus = "Red";
+            }
+
+            let moveDisplay = move;
+            let moveSpecial = values.movespecial;
+            if (moveSpecial) {
+                moveDisplay += " " + moveSpecial;
+            }
+            if (jumpMoveMax) {
+                moveDisplay = move + " / " + jumpMove + "j"
+            }
+
+
+
+            setAttrs({
+                "name": name,
+                "engine1": engine1,
+                "fc1": fc1,
+                "fc2": fc2,
+                "fc3": fc3,
+                "fc4": fc4,
+                "mp1": mp1,
+                "mp2": mp2,
+                "mp3": mp3,
+                "mp4": mp4,
+                "wp1": wp1,
+                "wp2": wp2,
+                "wp3": wp3,
+                "wp4": wp4,
+                "heatstatus": heatstatus,
+                "move": move,
+                "movestatus": movestatus,
+                "tmm": tmm,
+                "tmmstatus": tmmstatus,
+                "damShort": damShort,
+                "damMed": damMed,
+                "damLong": damLong,
+                "armourstatus": armourStatus,
+                "structurestatus": structureStatus,
+                "shortstatus": shortStatus,
+                "medstatus": medStatus,
+                "longstatus": longStatus,
+                "jumpmove": jumpMove,
+                "movedisplay": moveDisplay,
+            });
+
+
+
+        });
+    });
+
+
+
+
+
+    
+
+</script>
