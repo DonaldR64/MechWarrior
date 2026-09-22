@@ -293,7 +293,7 @@ input[type="hidden"][value="Destroyed"].weapon1-status ~ .weapon1 h4{
     text-align: center;
     align-items: center;
     padding: 3px;
-    background-color: lightgrey
+    background-color: whitesmoke
 }
 
 /* Weapon 2 */
@@ -350,7 +350,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     text-align: center;
     align-items: center;
     padding: 3px;
-    background-color: lightgrey
+    background-color: whitesmoke
 }
 
 .special {
@@ -398,7 +398,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
   text-align: left;
   align-items: center;
   padding: 3px;
-  background-color: lightgrey
+  background-color: whitesmoke
 }
 .fccrit img{
     width: 16px;
@@ -428,7 +428,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
   text-align: left;
   align-items: center;
   padding: 3px;
-    background-color: lightgrey
+    background-color: whitesmoke
 }
 .wpcrit img{
     width: 16px;
