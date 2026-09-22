@@ -9,9 +9,7 @@
     <div class="2colrow">
         <div class="col">
             <h3>Team Information</h3>
-            <label>Mech Name:</label><input type="text" name="attr_character_name">
-            <label>Mech Variant:</label><input type="text" name="attr_variant">
-            <br>
+            <label>Full Name:</label><input type="text" name="attr_character_name">
             <label for="attr_faction">Faction:</label>
             <select name="attr_faction">
                 <option value="" selected disabled hidden>Choose here</option>
@@ -236,8 +234,9 @@
         <div class="attributes">
             <main>
                 <section class="info f-center">
+                    <h3><span name="attr_variant"></span></h3>
                     <h1><span name="attr_name"></span></h1>
-                    <h3><span name="attr_variant"></span> Variant <span name="attr_size"></span> <span name="attr_type"></span></h3>
+                    <h3><span name="attr_size"></span> <span name="attr_type"></span></h3>
                     <h3><span name="attr_faction"></span> <span name="attr_role"></span></h3>
                 </section>
 
@@ -408,8 +407,13 @@
     on("sheet:opened", function() {
         getAttrs(["enginecrit",'fccritlevel','mpcritlevel','wpcritlevel','heat','move_max',"tmm_max","armour","armour_max","structure","structure_max","character_name","jumpmove_max","movespecial"], function(values) {
             
-            let name = values.character_name;
-            name = name.split("//")[0].trim();
+            let fullName = values.character_name;
+            fullName = fullName.replace(" ","//");
+            fullName = fullName.split("//");
+            let mechName = fullName[1];
+            let mechVariant = fullName[0];
+
+
             let engineCrit = parseInt(values.enginecrit) || 0;
             let fcCrit = parseInt(values.fccritlevel) || 0;
             let mpCrit = parseInt(values.mpcritlevel) || 0;
@@ -503,7 +507,8 @@
 
 
             setAttrs({
-                "name": name,
+                "name": mechName,
+                "variant": mechVariant,
                 "engine1": engine1,
                 "fc1": fc1,
                 "fc2": fc2,
