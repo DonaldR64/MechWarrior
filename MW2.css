@@ -382,6 +382,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     background-color: white;
     align-items: center;
     align-content: content-stretch;
+    font-weight: bold;
   }
 
 
