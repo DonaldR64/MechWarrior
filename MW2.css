@@ -293,6 +293,7 @@ input[type="hidden"][value="Destroyed"].weapon1-status ~ .weapon1 h4{
     text-align: center;
     align-items: center;
     padding: 3px;
+    background-color: lightgrey
 }
 
 /* Weapon 2 */
@@ -321,7 +322,6 @@ input[type="hidden"][value="Destroyed"].weapon2-status ~ .weapon2 h4{
     text-align: center;
     align-items: center;
     padding: 3px;
-    background-color: lightgrey
 }
 
 /* Weapon 3 */
@@ -350,6 +350,7 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     text-align: center;
     align-items: center;
     padding: 3px;
+    background-color: lightgrey
 }
 
 .special {
