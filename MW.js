@@ -827,7 +827,9 @@ const Main = (() => {
                 let wShortMax = aa[phrase + "short_max"];
                 let wMedMax = aa[phrase + "medium_max"];
                 let wLongMax = aa[phrase + "long_max"];
-                let wSpecial = aa[phrase + "special"];
+                let wSpecial = aa[phrase + "special"] || " ";
+                wSpecial = wSpecial.split(",").map(e => e.trim());
+
                 let info = {
                     name: wName,
                     phrase: phrase,
@@ -942,7 +944,7 @@ log(weaponArray)
         } 
         
         //movement/activation
-        abilityName = "Activate";
+        abilityName = "0: Activate";
         action = "!Activate;?{Order|Standstill|Move|Sprint|Charge";
         if (unit.moveSpecial.includes("Jump")) {
             action += "|Jump|Death from Above";
@@ -950,8 +952,31 @@ log(weaponArray)
         action += "}";
         AddAbility(abilityName,action,unit.charID);
 
+        let w = 1;
+        for (let i=0;i<unit.weaponArray.length;i++) {
+            let weapon = unit.weaponArray[i];
+            let abilityName = w + ": " + weapon.name;
+            let action = "!Fire;@{selected|token_id};@{target|token_id};" + i;
+            let special = weapon.special;
+            if (special.includes("Indirect Fire")) {
+                action += ";?{Aim|Direct|Indirect}";
+            }
+            let ov = special.find(e => e.includes("Overheat"));
+            if (ov) {
+                ov = ov.replace(/[^\d]/g,"");
+                ovH = "";
+                for (let o=0;o<=ov;o++) {
+                    ovH += o + "|";
+                }
+                action += ";?{Overheat Points|" + ovH + "}";
+            }
 
 
+
+
+            AddAbility(abilityName,action,unit.charID);
+
+        }
 
 
 
