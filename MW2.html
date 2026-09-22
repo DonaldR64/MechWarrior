@@ -504,28 +504,7 @@
             if (structure < structureMax/2) {
                 structureStatus = "Red";
             } 
-            let shortStatus = "White";
-            if (damShort > 0 && damShort < damShortMax) {
-                shortStatus = "Yellow";
-            }
-            if (damShort === 0) {
-                shortStatus = "Red";
-            }
-            let medStatus = "White";
-            if (damMed > 0 && damMed < damMedMax) {
-                medStatus = "Yellow";
-            }
-            if (damMed === 0) {
-                medStatus = "Red";
-            }
-            let longStatus = "White";
-            if (damLong > 0 && damLong < damLongMax) {
-                longStatus = "Yellow";
-            }
-            if (damLong === 0) {
-                longStatus = "Red";
-            }
-
+            
             let moveDisplay = move;
             let moveSpecial = values.movespecial;
             if (moveSpecial) {
