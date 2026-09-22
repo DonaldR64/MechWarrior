@@ -256,15 +256,15 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
   display:grid;
 }
 
+
 .weapontitle {
-  grid-area: weapontitle;
   display: grid;
-  grid-gap: 2px;
+  grid-gap: 1px;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  background-color: white;
-  text-align: center;
+  grid-template-rows: 1;
+  text-align: left;
   align-items: center;
+  padding: 3px;
 }
 
 
@@ -274,10 +274,11 @@ input[type="hidden"][value="Red"].structure-status ~ .structure {
   display: grid;
   grid-gap: 2px;
   grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
-  grid-template-rows: 1fr;
+  grid-template-rows: 1;
   background-color: white;
   text-align: center;
   align-items: center;
+  padding: 3px;
 }
 
 /* Weapon 1 */
