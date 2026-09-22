@@ -14,7 +14,7 @@
 
 .mysheet {
     width: 830px;
-    height: 570px;
+    height: 5300px;
     background-image: url("https://files.d20.io/images/501266163/oy5qGhS1vXgcKes92nLztw/thumb.jpg?1789612219");
     background-size: cover;
     background-position: center;
@@ -29,7 +29,7 @@
 main {
     display: grid;
     width: 800px;
-    height: 540px;
+    height: 500px;
     grid-gap: 4px;
     grid-template-columns: repeat(10,1fr);
     grid-template-rows: repeat(6,1fr);
@@ -289,7 +289,6 @@ input[type="hidden"][value="Destroyed"].weapon1-status ~ .weapon1 h4{
     grid-gap: 1px;
     grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
     grid-template-rows: 1;
-    background-color: white;
     text-align: center;
     align-items: center;
     padding: 3px;
@@ -346,7 +345,6 @@ input[type="hidden"][value="Destroyed"].weapon3-status ~ .weapon3 h4{
     grid-gap: 1px;
     grid-template-columns: 5fr 1fr 1fr 1fr 3fr;
     grid-template-rows: 1;
-    background-color: white;
     text-align: center;
     align-items: center;
     padding: 3px;
