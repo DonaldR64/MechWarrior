@@ -1487,6 +1487,7 @@ const Main = (() => {
             return;
         }
         let unit = UnitArray[msg.selected[0]._id];
+log(unit.token)
         if (!unit) {
             sendChat("","Not in UnitArray");
             return;
@@ -2022,8 +2023,8 @@ const Main = (() => {
                 unit.SetStatus("Not Activated");
                 unit.token.set({
                     aura1_color: "transparent",
-                    aura1_radius: .1,
-                    aura1_options: "hex",
+                    aura1_radius: .2,
+                    aura1_options: "circleborder",
                 });
             }
         });
