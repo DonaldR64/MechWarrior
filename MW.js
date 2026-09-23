@@ -1504,14 +1504,7 @@ const Main = (() => {
             if (hex.terrainHeight > 0) {
                 outputCard.body.push("Terrain Height: " + hex.terrainHeight);
             }
-
             outputCard.body.push("Move Cost: " + hex.moveCost);
-            if (hex.blockLOS !== false) {
-                outputCard.body.push("Affects LOS as " + hex.blockLOS);
-            }
-            if (hex.cover === true) {
-                outputCard.body.push("Hex gives Cover");
-            }
         }
 
 
@@ -1828,6 +1821,7 @@ const Main = (() => {
     const NextPhase = () => {
         let currentPhase = state.MW.phase;
         let currentTurn = state.MW.turn;
+        RemoveLines(["LOS"]);
 
         if (currentTurn === 0) {
             //placeholder
@@ -1928,6 +1922,7 @@ const Main = (() => {
 
     const Activate = (msg) => {
         RemoveMoveMarkers();
+        RemoveLines(["LOS"]);
         let id = msg.selected[0]._id;
         let unit = UnitArray[id];
         let Tag = msg.content.split(";");
@@ -2083,6 +2078,7 @@ const Main = (() => {
     const ShowTargets = (msg) => {
         let id = msg.selected[0]._id;
         let unit = UnitArray[id];
+        RemoveLines(["LOS"]);
 
         SetupCard(unit.name,"Targetting",unit.faction);
 
@@ -2119,8 +2115,19 @@ const Main = (() => {
                 let percent = Math.max(0,Math.round((13-tN) * 100/12));
                 outputCard.body.push(tip + ": " + percent + "%");
                 //line coloured based on percent
-
-
+                let colour = "#000000";
+                if (percent > 0 && percent <= 25) {
+                    colour = "#ff0000";
+                } else if (percent > 25 && percent <= 50) {
+                    colour = "#ffff00";
+                } else if (percent > 50 && percent <= 75) {
+                    colour = "#00ffff";
+                } else if (percent > 75) {
+                    colour = "#00ff00";
+                }
+                let A = [HexMap[unit.hexLabel].centre.x,HexMap[unit.hexLabel].centre.y];
+                let B =  [HexMap[target.hexLabel].centre.x,HexMap[target.hexLabel].centre.y];
+                DrawLine([A,B],colour,"LOS");
             })
         }
         PrintCard();
@@ -2155,7 +2162,7 @@ const Main = (() => {
         let tip = "Skill: " + shooter.skill;
         //A
         if ((shooterStatus === "Jump" || shooterStatus === "Death from Above") && shooter.type !== "Infantry") {
-            tip += "<br>Jumping: +2";
+            tip += "<br>Jumping Move: +2";
             tN += 2;
         } else if (shooterStatus === "Standstill" && shooter.type !== "Infantry") {
             tip += "<br>Standstill -1";
@@ -2479,6 +2486,7 @@ const Main = (() => {
         let newLabel = new Point(tok.get("left"),tok.get("top")).toCube().label();
         let prevLabel = new Point(prev.left,prev.top).toCube().label();
         if (unit && newLabel !== prevLabel) {
+            RemoveLines(["LOS"]);
             if (unit.GetStatus === "Standstill" || unit.token.get(SM.immobile)) {
                 tok.set({
                     left: prev.left,
@@ -2514,8 +2522,9 @@ const Main = (() => {
         } 
         if (unit && tok.get("rotation") !== prev.rotation) {
             log(unit.name + " turning")
+            RemoveLines(["LOS"]);
             let phi = Angle(tok.get("rotation"));
-            phi = Math.round(phi/30) * 30;
+            phi = Math.round(phi/60) * 60;
             tok.set("rotation",phi);
         }
     }
@@ -2526,6 +2535,7 @@ const Main = (() => {
             let unit = UnitArray[id];
             if (unit) {
                 log(unit.name + " removed from Unit Array")
+                RemoveLines(["LOS"]);
                 let index = HexMap[unit.hexLabel].tokenIDs.indexOf(id);
                 if (index > -1) {
                     HexMap[unit.hexLabel].tokenIDs.splice(index,1);
