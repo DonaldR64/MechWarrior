@@ -1454,7 +1454,7 @@ const Main = (() => {
         points.push([b[0] - left,b[1] - bottom]);
         points = JSON.stringify(points);
 
-        let layer = (type === "LOS") ? "map":"map";
+        let layer = "foreground";
 
         let page = getObj('page',Campaign().get('playerpageid'));
         
@@ -2105,24 +2105,19 @@ const Main = (() => {
         if (targets.length === 0) {
             outputCard.body.push("No Targets in LOS, Weapon Range or Arc");
         } else {
-            //for each target, draw line and maybe indicate % chance of hit
-            //can create routine to factor to hit, call on it here and in firing routine
             _.each(targets,target => {
                 let info = SATOR(unit,target);
                 let tN = info.targetNumber;
                 let tip = info.tip;
                 tip = '[' + target.name + '](#" class="showtip" title="' + tip + ')';
-                let percent = Math.max(0,Math.round((13-tN) * 100/12));
-                outputCard.body.push(tip + ": " + percent + "%");
+                outputCard.body.push(tip + ": Needing " + tN + "+");
                 //line coloured based on percent
                 let colour = "#000000";
-                if (percent > 0 && percent <= 25) {
+                if (tN > 9 && tN <= 12) {
                     colour = "#ff0000";
-                } else if (percent > 25 && percent <= 50) {
+                } else if (tN > 6 && tN < 10) {
                     colour = "#ffff00";
-                } else if (percent > 50 && percent <= 75) {
-                    colour = "#00ffff";
-                } else if (percent > 75) {
+                } else if (tN < 7) {
                     colour = "#00ff00";
                 }
                 let A = [HexMap[unit.hexLabel].centre.x,HexMap[unit.hexLabel].centre.y];
