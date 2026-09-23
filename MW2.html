@@ -451,7 +451,7 @@
             }
 
             let jumpMoveMax = values.jumpmove_max || "";
-            let jumpMove = "";
+            let jumpMove = 0;
             if (jumpMoveMax) {
                 jumpMove = Math.floor(jumpMoveMax * ratios[mpCrit]);
                 jumpMove = Math.min(jumpMove,Math.max(jumpMoveMax - mpCrit,0));
