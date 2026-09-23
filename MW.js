@@ -811,6 +811,14 @@ const Main = (() => {
                     this.jumpMove = this.moveMax;
                 }
             }
+log(this.charName)
+log(aa.move)
+log(aa.move_max)
+log(aa.jumpmove)
+log(aa.jumpmove_max)
+log(aa.movespecial)
+
+
             this.tmm = parseInt(aa.tmm) || 0;
             this.tmmMax = parseInt(aa.tmm_max) || 0;
             this.armour = parseInt(aa.armour) || 0;
@@ -862,7 +870,6 @@ const Main = (() => {
                 }
                 weaponArray.push(info);
             }
-log(weaponArray)
             this.weaponArray = weaponArray;
             this.maxRange = unitMaxRange;
 
@@ -1218,7 +1225,6 @@ log(weaponArray)
         pageInfo.height = pageInfo.page.get("height") * 70;
         pageInfo.type = pageInfo.page.get("grid_type");
 
-log(pageInfo.page)
 
     }
 
@@ -1669,8 +1675,8 @@ log(pageInfo.page)
         let interLabels = [interCubes[0].map((e)=> e.label()), interCubes[1].map((e)=> e.label())];
         let len = interLabels[0].length;
 
-log("S: " + shooterHeight)
-log("T: " + targetHeight)
+//log("S: " + shooterHeight)
+//log("T: " + targetHeight)
 
 
         let woods = false; 
@@ -1702,14 +1708,14 @@ log("T: " + targetHeight)
         for (let side=0;side<2;side++) {
             let semi = 0;
             let losSide = true;
-log("Side: " + side)
+//log("Side: " + side)
             interHexLoop:
             for (let i=0;i<len;i++) {
                 let label = interLabels[side][i];
                 let interHex = HexMap[label];
 
-log(i + ": " + label)
-log(interHex)
+//log(i + ": " + label)
+//log(interHex)
                 //hills
                 let ihElevation = interHex.elevation - baseElevation;
                 if (ihElevation >= shooterHeight && ihElevation >= targetHeight) {
@@ -1737,7 +1743,7 @@ log(interHex)
                 if (interHex.terrainHeight > 0) {
                     let intervening = false;
                     let ihTH = ihElevation + interHex.terrainHeight;
-log("ihTH: " + ihTH)
+//log("ihTH: " + ihTH)
                     if (ihTH >= shooterHeight && ihTH >= targetHeight) {
                         intervening = true;
                     }
@@ -1747,7 +1753,7 @@ log("ihTH: " + ihTH)
                     if (i === (len-1) && ihTH >= targetHeight) {
                         intervening = true;
                     }
-log("Intervening: " + intervening)
+//log("Intervening: " + intervening)
                     if (intervening === true) {
                         if (interHex.blockLOS === "Solid") {
                             losBlockedAt = label;
@@ -1827,7 +1833,6 @@ log("Intervening: " + intervening)
 
 
         }
-log(currentPhase)
         let phases = ["Movement","Combat","End"];
         let phaseNum = phases.indexOf(currentPhase);
         phaseNum++;
@@ -1842,7 +1847,6 @@ log(currentPhase)
 
         RemoveMoveMarkers();
 
-log(currentPhase)
         switch(currentPhase) {
             case 'Movement': 
                 Movement();
@@ -2048,8 +2052,6 @@ log(currentPhase)
                 AttributeSet(unit.charID,weapon.phrase + "medium",weapon.mediumMax);
                 AttributeSet(unit.charID,weapon.phrase + "long",weapon.longMax);
             }
-            log("Set")
-            log(unit.weaponArray)
             AttributeSet(unit.charID,"enginecrit",0);
             AttributeSet(unit.charID,"mpcritlevel",0);
             AttributeSet(unit.charID,"wpcritlevel",0);
