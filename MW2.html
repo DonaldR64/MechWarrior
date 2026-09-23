@@ -407,6 +407,9 @@
         getAttrs(["enginecrit",'fccritlevel','mpcritlevel','wpcritlevel','heat','move_max',"tmm_max","armour","armour_max","structure","structure_max","character_name","jumpmove_max","movespecial"], function(values) {
             
             let name = values.character_name.split("//")[0].trim();
+            let mechName = name.split(" ");
+            let variant = mechName[name.length - 1];
+            mechName = name.length(mechName.length - 1);
 
             let engineCrit = parseInt(values.enginecrit) || 0;
             let fcCrit = parseInt(values.fccritlevel) || 0;
@@ -495,6 +498,8 @@
 
             setAttrs({
                 "name": name,
+                "mechname": mechName,
+                "variant": variant,
                 "engine1": engine1,
                 "fc1": fc1,
                 "fc2": fc2,

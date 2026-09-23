@@ -1728,7 +1728,6 @@ log(unit.token)
                 if (i === (len-1) && ihElevation >= targetHeight) {
                     losBlockedAt = label;
                     losReason = "Hill";
-                    losBlockedAt.push(label);
                     losSide = false;
                     break interHexLoop;
                 }
@@ -2126,6 +2125,9 @@ log(unit.token)
                 DrawLine([A,B],colour,"LOS");
             })
         }
+        ButtonInfo("Remove Lines","!RemoveLines2")
+
+
         PrintCard();
     }
 
@@ -2168,7 +2170,7 @@ log(unit.token)
         }
 
         //T
-        if (targetStatus === "Move") {
+        if (targetStatus === "Move" || targetStatus === "Sprint") {
             tip += "<br>Normal TMM  +" + target.tmm;
             tN += target.tmm;
         } else if (targetStatus === "Standstill" && target.token.get(SM.immobile) === false) {
@@ -2432,6 +2434,7 @@ log(unit.token)
                 left: lastHex.centre.x,
                 top: lastHex.centre.y,
             })
+            unit.hexLabel = lastHex.label;
 
         } else {
             sendChat("","No Path");
