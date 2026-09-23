@@ -770,8 +770,11 @@ const Main = (() => {
   
             this.charName = char.get("name");
             let name = token.get("name");
-            let mechName = aa.mechname || "";
-            let variant = aa.variant || "";
+            let mechName = this.charName.split("//")[0].trim();
+            mechName = mechName.split(" ");
+            let variant = mechName[mechName.length -1];
+            mechName.length--;
+            mechName = mechName.toString().replaceAll(","," ");
             if (!name || name === "") {
                 name = mechName;
             }
