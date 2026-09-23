@@ -408,7 +408,8 @@
             
             let name = values.character_name.split("//")[0].trim();
             let mechName = name.split(" ");
-            let variant = mechName[name.length - 1];
+            let variant = mechName[mechName.length - 1];
+            mechName.length = mechName.length - 1;
             mechName = name.length(mechName.length - 1).toString().replaceAll(","," ");
 
             let engineCrit = parseInt(values.enginecrit) || 0;
