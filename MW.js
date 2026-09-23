@@ -770,10 +770,16 @@ const Main = (() => {
   
             this.charName = char.get("name");
             let name = token.get("name");
+            let mechName = aa.mechname || "";
+            let variant = aa.variant || "";
             if (!name || name === "") {
-                name = this.charName;
+                name = mechName;
             }
+
             this.name = name;
+            this.mechName = mechName;
+            this.variant = variant;
+
             this.hexLabel = label;
 
             this.id = id;
@@ -2032,12 +2038,8 @@ log(unit.token)
 
         _.each(UnitArray, unit => {
             let skill = unit.skill;
-            let rank = Factions[unit.faction].ranks[skill];
-            let index = randomInteger(names[unit.player].length) - 1;
-            let name = names[unit.player].splice(index,1);
-            name = rank + name;
-            unit.name = name;
-            unit.token.set("name",name);
+            unit.name = unit.mechName;
+            unit.token.set("name",unit.mechName);
             unit.startHexLabel = unit.hexLabel;
             for (let i=0;i<unit.weaponArray.length;i++) {
                 let weapon = unit.weaponArray[i];
