@@ -2036,14 +2036,13 @@ log(unit.token)
             }
         });
 
-        let names = [DeepCopy(Factions[state.MW.factions[0]].names), DeepCopy(Factions[state.MW.factions[1]].names)];
-
         _.each(UnitArray, unit => {
             let skill = unit.skill;
             let rankA = String(Factions[unit.faction].rankA + skill);
             let rankB = Factions[unit.faction].rankB + skill;
             rankB = String(rankB).padStart(4,"0");
-            let rankSM = rankA + "::letters_and_numbers" + rankB;
+            let rankSM = "status_letters_and_numbers" + rankB + "::" + rankA;
+log(rankSM)
             unit.token.set(rankSM,true)
             unit.name = unit.mechName;
             unit.token.set("name",unit.mechName);
