@@ -102,8 +102,8 @@ const Main = (() => {
             "fontColour": "#000000",
             "borderColour": "#ff0000",
             "borderStyle": "5px ridge",
-            "names": ["Abbey","Abrams","Babcokc","Baker","Bell","Cameron","Carmichael","Davies","Drake","Dundee","Elm","Ferguson","Fischer","Garibaldi","Graham","Hartford","Highfield","Jenkins","Jepsen","Johnson","Kaminski","Kesselring","Lee","Marik","Marshall","Owens","Pascal","Robinson","Schneider","Thornton"],
-            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","",""],
+            "rankA": 5982296,
+            "rankB": 177, //make sure turn this into 0177 etc
         },
         "Clan Jade Falcon": {
             "image": "https://files.d20.io/images/501596890/57Ywz8MgvvNqOYv1vL0F0A/thumb.avif?1789866330",
@@ -113,9 +113,8 @@ const Main = (() => {
             "fontColour": "#FFFFFF",
             "borderColour": "#341F50",
             "borderStyle": "5px double",
-            "names": ["Bailey","Binetti","Calbot","Clees","Eodrap","Folker","Hazen","Helmer","Icaza","Isha","Littleton","Loudon","Malthus","Mattlov","Pryde","Roshak","Schtern","Sustan","Thastus","Viola"],
-            "ranks": ["Col. ","Cpt. ","Com. ","PC. ","",""],
-
+            "rankA": 5982196,
+            "rankB": 77, 
         },
         "Clan Wolf": {
             "image": "https://files.d20.io/images/501598815/dgUnUmoCtSayZJkw8eMWWA/thumb.avif?1789867478",
@@ -125,8 +124,8 @@ const Main = (() => {
             "fontColour": "#000000",
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
-            "names": ["Calvert","Carson","Dernos","Feng","Hoskins","Jennings","Kerensky","Lager","Leroux","Mehta","Meredith","Nygren","Radick","Robbin","Saline","Shaw","Taylor","Torc","Vickers","Ward","Waters"],
-            "ranks": ["Col. ","Cpt. ","Com. ","PC. ","",""],
+            "rankA": 5982145,
+            "rankB": 27
         },
         "Clan Smoke Jaguar": {
             "image": "https://files.d20.io/images/501599772/_FilZT_hOdIB-rL4WUpJLA/thumb.avif?1789868051",
@@ -136,8 +135,8 @@ const Main = (() => {
             "fontColour": "#ffffff",
             "borderColour": "#545454",
             "borderStyle": "5px double",
-            "names": ["Bowen","Canto","Corbett","Dimitrov","Furey","Hoff","Howell","Ismirii","Kotare","Levi","Montezuma","Moon","Osis","Ott","Perez","Rippon","Showers","Stiles","Weaver","Wimmer","Yoshida"],
-            "ranks": ["Col. ","Cpt. ","Com. ","PC. ","",""],
+            "rankA": 5982397,
+            "rankB": 277,           
         },
         "Northwind Highlanders": {
             "image": "https://files.d20.io/images/501599833/Hx98oLbHV5JRWNLqWet13g/thumb.png?1789868093",
@@ -147,8 +146,8 @@ const Main = (() => {
             "fontColour": "#ffffff",
             "borderColour": "#ff0000",
             "borderStyle": "5px double",
-            "names": ["Alan","Allistar","Armstrong","Campbell","Cambell-Stewart","Cook","Doohan","Duffy","Evans","Forest","Graham","Henderson","Jacobs","Jaffray","Kirkpatrick","Logan","MacLeod","MacGregor","McHenry","MacIntosh","McCallan","McGraw","Macpherson","Patterson","Reynolds","Roberts","Stirling","Wallace"],
-            "ranks": ["Col. ","Maj. ","Cpt. ","Lt. ","",""],
+            "rankA": 5982246,
+            "rankB": 127,
         },
 
 
@@ -2041,6 +2040,11 @@ log(unit.token)
 
         _.each(UnitArray, unit => {
             let skill = unit.skill;
+            let rankA = String(Factions[unit.faction].rankA + skill);
+            let rankB = Factions[unit.faction].rankB + skill;
+            rankB = String(rankB).padStart(4,"0");
+            let rankSM = rankA + "::letters_and_numbers" + rankB;
+            unit.token.set(rankSM,true)
             unit.name = unit.mechName;
             unit.token.set("name",unit.mechName);
             unit.startHexLabel = unit.hexLabel;
