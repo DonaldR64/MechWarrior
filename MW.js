@@ -811,13 +811,6 @@ const Main = (() => {
                     this.jumpMove = this.moveMax;
                 }
             }
-log(this.charName)
-log(aa.move)
-log(aa.move_max)
-log(aa.jumpmove)
-log(aa.jumpmove_max)
-log(aa.movespecial)
-
 
             this.tmm = parseInt(aa.tmm) || 0;
             this.tmmMax = parseInt(aa.tmm_max) || 0;
@@ -826,6 +819,14 @@ log(aa.movespecial)
             this.structure = parseInt(aa.structure) || 0;
             this.structureMax = parseInt(aa.structure_max) || 0;
 
+            let special = [];
+            if (aa.special1) {special.push(aa.special1)};
+            if (aa.special2) {special.push(aa.special2)};
+            if (aa.special3) {special.push(aa.special3)};
+            if (aa.special4) {special.push(aa.special4)};
+            if (aa.special5) {special.push(aa.special5)};
+            if (aa.special6) {special.push(aa.special6)};
+            this.special = special;
 
 
             this.skill = parseInt(aa.skill) || 4;
@@ -1642,7 +1643,7 @@ log(aa.movespecial)
                 outputCard.body.push("Target has Partial Cover +1");
             }
             if (losResult.woods === true) {
-                outputCard.body.push("Target has a Terrain Modifier of +1");
+                outputCard.body.push("Target has a Woods Modifier of +1");
             }
             if (losResult.underwater === true) {
                 outputCard.body.push("Both are Underwater");
@@ -1679,7 +1680,7 @@ log(aa.movespecial)
 //log("T: " + targetHeight)
 
 
-        let woods = false; 
+        let woods = targetHex.woods ? true:false; 
         let partial = false;
         let losBlockedAt = false, losReason = false;
         let visibleSides = 0;
@@ -1995,7 +1996,7 @@ log(aa.movespecial)
         })
         if (togo[unit.player] > 0 && togo[unit.player] >= (2 * togo[nextPlayer])) {
             outputCard.body.push("[hr]");
-            outputCard.body.push("Another Unit from this Faction should Move next");
+            outputCard.body.push("[#ff0000]Another Unit from this Faction should Move next[/#]");
         }
         if (togo[unit.player] === 0 && togo[nextPlayer] === 0) {
             outputCard.body.push("[hr]");
@@ -2067,9 +2068,6 @@ log(aa.movespecial)
             unit.armour = unit.armourMax;
             AttributeSet(unit.charID,"structure",unit.structureMax);
             unit.structure = unit.structureMax;
-            let armourID = AttributeID(unit.charID,"armour");
-            let structureID = AttributeID(unit.charID,"structure");
-            let heatID = AttributeID(unit.charID,"heat");
             unit.token.set({
                 "bar1_value": unit.structureMax,
                 "bar2_value": unit.armourMax,
@@ -2090,43 +2088,39 @@ log(aa.movespecial)
 
 
         let targets = [];
-        let weapons = [];
         _.each(UnitArray,unit2 => {
             if (unit2.faction !== unit.faction) {
                 let losResult = LOS(unit,unit2);
                 if (losResult.los === true && losResult.distance <= unit.maxRange) {
-                    _.each(unit.weaponArray,weapon => {
+                    for (let i=0;i<unit.weaponArray.length; i++) {
+                        let weapon = unit.weaponArray[i];
                         let damage = Damage(weapon,losResult.distance);
                         if ((losResult.facings.facing === "Front" && damage !== 0) ||  (losResult.facings.facing === "Rear" && damage !== 0 && weapon.special.includes("Rear")) ){
                             targets.push(unit2);
-                            weapons.push(weapon);
+                            break;
                         }
-                    })
+                    }
                 }
             }
         })
+        targets = [...new Set(targets)];
 
         let c = true;
         if (targets.length === 0) {
             outputCard.body.push("No Targets in LOS, Weapon Range or Arc");
-            c = false;
-        } else if (weapons.length === 0) {
-            outputCard.body.push("No Weapons have Range/Arc to Targets");
-            c = false;
         } else {
             //for each target, draw line and maybe indicate % chance of hit
             //can create routine to factor to hit, call on it here and in firing routine
             _.each(targets,target => {
                 let info = SATOR(unit,target);
                 let tN = info.targetNumber;
-                let percent = Math.round((13-tN) * 100/12);
-                if (percent <= 0) {
-                    outputCard.body.push(target.name + ": Cannot Hit");
-                    //black line
-                } else {
-                    outputCard.body.push(target.name + ": " + percent + "%");
-                    //line coloured based on percent
-                }
+                let tip = info.tip;
+                tip = '[' + target.name + '](#" class="showtip" title="' + tip + ')';
+                let percent = Math.max(0,Math.round((13-tN) * 100/12));
+                outputCard.body.push(tip + ": " + percent + "%");
+                //line coloured based on percent
+
+
             })
         }
         PrintCard();
@@ -2167,19 +2161,19 @@ log(aa.movespecial)
             tip += "<br>Standstill -1";
             tN -= 1;
         } else if (shooterStatus === "Move") {
-            tip += "<br>Move +0";
+            tip += "<br>Normal Move +0";
         }
 
         //T
         if (targetStatus === "Move") {
-            tip += "<br>TMM  +" + target.tmm;
+            tip += "<br>Normal TMM  +" + target.tmm;
             tN += target.tmm;
         } else if (targetStatus === "Standstill" && target.token.get(SM.immobile) === false) {
             tip += "<br>Target Standstill: +0";
         } else if (targetStatus === "Jump" || targetStatus === "Death from Above") {
             let strong = target.special.find(e => e.includes("Strong Jump Jets"));
             let weak = target.special.find(e => e.includes("Weak Jump Jets"));
-            tip += "<br>Jumping +" + (target.tmm + 1);
+            tip += "<br>Jumping TMM +" + (target.tmm + 1);
             tN += (target.tmm + 1);
             if (strong) {
                 strong = strong.replace(/[^\d]/g,"");
