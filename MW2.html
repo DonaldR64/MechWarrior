@@ -410,7 +410,7 @@
             let mechName = name.split(" ");
             let variant = mechName[mechName.length - 1];
             mechName.length = mechName.length - 1;
-            mechName = name.length(mechName.length - 1).toString().replaceAll(","," ");
+            mechName = mechName.toString().replaceAll(","," ");
 
             let engineCrit = parseInt(values.enginecrit) || 0;
             let fcCrit = parseInt(values.fccritlevel) || 0;
