@@ -416,8 +416,6 @@
             let greendot = "https://files.d20.io/images/501354665/YxIXZgyqIHPwfjQ_XVZu3Q/thumb.png?1789692122";
             let reddot = "https://files.d20.io/images/501354284/8g7GBj3vrwxESRkfcoRa5g/thumb.png?1789691985"
 
-
-
             let engine1 = engineCrit === 1 ? reddot:greendot;
             let fc1 = fcCrit >= 1 ? reddot:greendot;
             let fc2 = fcCrit >= 2 ? reddot:greendot;
@@ -449,14 +447,20 @@
             if (move === 0) {
                 movestatus = "Black";
             }
-
+            let moveSpecial = values.movespecial;
             let jumpMoveMax = values.jumpmove_max || "";
             let jumpMove = 0;
-            if (jumpMoveMax) {
+            if (moveSpecial.includes("j")) {
                 jumpMove = Math.floor(jumpMoveMax * ratios[mpCrit]);
                 jumpMove = Math.min(jumpMove,Math.max(jumpMoveMax - mpCrit,0));
             }
-
+            let moveDisplay = move;
+            if (moveSpecial) {
+                moveDisplay += " " + moveSpecial;
+                if (jumpMoveMax && jumpMoveMax !== moveMax) {
+                    moveDisplay = move + " / " + jumpMove + "j";
+                }
+            }
 
             let tmmMax = values.tmm_max;
             let tmm = Math.floor(tmmMax * ratios[mpCrit]);
@@ -488,17 +492,6 @@
             if (structure < structureMax/2) {
                 structureStatus = "Red";
             } 
-            
-            let moveDisplay = move;
-            let moveSpecial = values.movespecial;
-            if (moveSpecial) {
-                moveDisplay += " " + moveSpecial;
-            }
-            if (jumpMoveMax) {
-                moveDisplay = move + " / " + jumpMove + "j"
-            }
-
-
 
             setAttrs({
                 "name": name,
